@@ -2,18 +2,25 @@ package main
 
 import (
 	"fmt"
-	"unicode/utf8"
+	"parser/lexer"
 )
 
 func main() {
-	str := "Hello, this is a test"
-	currentPosition := 0
+	l := lexer.NewLexer("a test string")
 
-	runeAtIndex, size := utf8.DecodeRuneInString(str[currentPosition:])
+	for {
+		c, s := l.PeekNextChar()
+		fmt.Println(string(c))
 
-	if runeAtIndex != utf8.RuneError || size > 0 {
-		fmt.Printf("Rune at index %d: %c\n", currentPosition, runeAtIndex)
-	} else {
-		fmt.Printf("Invalid utf-8 sequence at index %d\n", currentPosition)
+		c, s = l.GetNextChar()
+		fmt.Println(string(c))
+
+		if c == 0 {
+			break
+		}
+
+		if s == 0 {
+			break
+		}
 	}
 }
