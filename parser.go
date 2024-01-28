@@ -3,24 +3,21 @@ package main
 import (
 	"fmt"
 	"parser/lexer"
+	"parser/lexer/token"
 )
 
 func main() {
-	l := lexer.NewLexer("a test string")
+	l, err := lexer.New("+-")
 
-	for {
-		c, s := l.PeekNextChar()
-		fmt.Println(string(c))
+	if err == nil {
+		for {
+			t := l.NextToken()
 
-		c, s = l.GetNextChar()
-		fmt.Println(string(c))
+			fmt.Printf("%d : %d", t.Type, t.Literal)
 
-		if c == 0 {
-			break
-		}
-
-		if s == 0 {
-			break
+			if t.Type == token.EOF || t.Type == token.ILLEGAL {
+				break
+			}
 		}
 	}
 }

@@ -1,9 +1,16 @@
 package token
 
-type Type string
+type Type int
 type Token struct {
 	Type    Type
-	Literal string
+	Literal rune
+}
+
+func New(t Type, l rune) Token {
+	return Token{
+		Type:    t,
+		Literal: l,
+	}
 }
 
 const (
