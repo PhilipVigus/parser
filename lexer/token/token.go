@@ -65,5 +65,6 @@ func GetTokenType(t Token) string {
 	if exists {
 		return name
 	}
+
 	return "UNKNOWN"
 }
