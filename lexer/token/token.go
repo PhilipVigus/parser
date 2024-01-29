@@ -3,20 +3,20 @@ package token
 import "fmt"
 
 type Type int
-type Token struct {
+type Token[T any] struct {
 	Type    Type
-	Literal rune
+	Literal T
 }
 
-func New(t Type, l rune) Token {
-	return Token{
+func New[T any](t Type, l T) Token[any] {
+	return Token[any]{
 		Type:    t,
 		Literal: l,
 	}
 }
 
-func (t Token) String() string {
-	return fmt.Sprintf("[ type: %s, literal: %c ]", GetTokenType(t), t.Literal)
+func (t Token[T]) String() string {
+	return fmt.Sprintf("[ type: %s, literal: %v ]", GetTokenType(t), t.Literal)
 }
 
 const (
@@ -59,7 +59,7 @@ var tokenTypes = map[Type]string{
 	LET:       "LET",
 }
 
-func GetTokenType(t Token) string {
+func GetTokenType[T any](t Token[T]) string {
 	name, exists := tokenTypes[t.Type]
 
 	if exists {

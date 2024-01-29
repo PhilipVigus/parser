@@ -41,18 +41,18 @@ func (l *Lexer) readNextChar() (rune, int) {
 	return c, size
 }
 
-func (l *Lexer) NextToken() token.Token {
-	var t token.Token
+func (l *Lexer) NextToken() token.Token[any] {
+	var t token.Token[any]
 
 	switch l.ch {
 	case '+':
-		t = token.New(token.PLUS, '+')
+		t = token.New(token.PLUS, "+")
 	case '-':
-		t = token.New(token.MINUS, '-')
+		t = token.New(token.MINUS, "-")
 	case 0:
 		t = token.New(token.EOF, 0)
 	default:
-		t = token.New(token.ILLEGAL, 0)
+		t = token.New(token.ILLEGAL, l.ch)
 	}
 
 	if t.Type != token.EOF && t.Type != token.ILLEGAL {
@@ -60,4 +60,12 @@ func (l *Lexer) NextToken() token.Token {
 	}
 
 	return t
+}
+
+func (l *Lexer) readIdentifier() {
+
+}
+
+func isLetter(ch rune) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
