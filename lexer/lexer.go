@@ -97,6 +97,10 @@ func (l *Lexer) readIdentifier() string {
 	for isLetter(l.ch) {
 		l.readNextChar()
 	}
+
+	l.position = l.readPosition - 1
+	l.readPosition--
+
 	return l.input[position:l.position]
 }
 
