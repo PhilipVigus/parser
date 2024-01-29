@@ -13,7 +13,7 @@ func main() {
 		for {
 			t := l.NextToken()
 
-			fmt.Printf("%d : %d", t.Type, t.Literal)
+			fmt.Println(t)
 
 			if t.Type == token.EOF || t.Type == token.ILLEGAL {
 				break
