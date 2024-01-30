@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	l, err := lexer.New("-wibble_bob-bob+")
+	l, err := lexer.New("bob-+wibble")
 
 	if err == nil {
 		for {

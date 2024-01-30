@@ -51,57 +51,38 @@ func (l *Lexer) readNextChar() {
 	l.readPosition++
 }
 
-func (l *Lexer) peekNextChar() (rune, int) {
-	c, size := utf8.DecodeRuneInString(l.input[l.readPosition:])
-
-	if c == utf8.RuneError {
-		if size == 0 {
-			l.ch = 0
-		} else {
-			l.ch = utf8.RuneError
-		}
-	} else {
-		l.ch = c
-	}
-
-	return c, size
-}
-
 func (l *Lexer) NextToken() token.Token[any] {
 	var t token.Token[any]
 
 	switch l.ch {
 	case '+':
 		t = token.New(token.PLUS, "+")
+		l.readNextChar()
 	case '-':
 		t = token.New(token.MINUS, "-")
+		l.readNextChar()
 	case 0:
-		t = token.New(token.EOF, 0)
+		t = token.New(token.EOF, "")
 	default:
 		if isLetter(l.ch) {
-			t = token.New(token.IDENT, l.readIdentifier())
+			ident := l.readIdentifier()
+			t = token.New(token.IDENT, ident)
 		} else {
-			t = token.New(token.ILLEGAL, l.ch)
+			t = token.New(token.ILLEGAL, string(l.ch))
+			l.readNextChar()
 		}
-	}
-
-	if t.Type != token.EOF && t.Type != token.ILLEGAL {
-		l.readNextChar()
 	}
 
 	return t
 }
 
 func (l *Lexer) readIdentifier() string {
-	position := l.position
+	startPosition := l.position // Mark the start of the identifier
 	for isLetter(l.ch) {
 		l.readNextChar()
 	}
-
-	l.position = l.readPosition - 1
-	l.readPosition--
-
-	return l.input[position:l.position]
+	// No need to adjust l.position or l.readPosition here
+	return l.input[startPosition:l.position]
 }
 
 func isLetter(ch rune) bool {
