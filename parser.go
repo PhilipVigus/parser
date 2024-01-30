@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	l, err := lexer.New("bob-+wibble")
+	l, err := lexer.New("bob-+wibble/////////")
 
 	if err == nil {
 		for {
@@ -15,7 +15,7 @@ func main() {
 
 			fmt.Println(t)
 
-			if t.Type == token.EOF || t.Type == token.ILLEGAL {
+			if t.Type == token.Eof || t.Type == token.Illegal {
 				break
 			}
 		}

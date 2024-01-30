@@ -55,20 +55,68 @@ func (l *Lexer) NextToken() token.Token[any] {
 	var t token.Token[any]
 
 	switch l.ch {
+	case '=':
+		t = token.New(token.Assign, "=")
+		l.readNextChar()
 	case '+':
-		t = token.New(token.PLUS, "+")
+		t = token.New(token.Plus, "+")
 		l.readNextChar()
 	case '-':
-		t = token.New(token.MINUS, "-")
+		t = token.New(token.Minus, "-")
+		l.readNextChar()
+	case '*':
+		t = token.New(token.Multiply, "*")
+		l.readNextChar()
+	case '/':
+		t = token.New(token.Divide, "/")
+		l.readNextChar()
+	case ',':
+		t = token.New(token.Comma, ",")
+		l.readNextChar()
+	case '.':
+		t = token.New(token.FullStop, ".")
+		l.readNextChar()
+	case ';':
+		t = token.New(token.Semicolon, ";")
+		l.readNextChar()
+	case ':':
+		t = token.New(token.Colon, ":")
+		l.readNextChar()
+	case '(':
+		t = token.New(token.LParen, "(")
+		l.readNextChar()
+	case ')':
+		t = token.New(token.RParen, ")")
+		l.readNextChar()
+	case '{':
+		t = token.New(token.LBrace, "{")
+		l.readNextChar()
+	case '}':
+		t = token.New(token.RBrace, "}")
+		l.readNextChar()
+	case '[':
+		t = token.New(token.LBracket, "[")
+		l.readNextChar()
+	case ']':
+		t = token.New(token.RBracket, "]")
+		l.readNextChar()
+	case '%':
+		t = token.New(token.Percent, "%")
+		l.readNextChar()
+	case '"':
+		t = token.New(token.DoubleQuote, "\"")
+		l.readNextChar()
+	case '\'':
+		t = token.New(token.SingleQuote, "'")
 		l.readNextChar()
 	case 0:
-		t = token.New(token.EOF, "")
+		t = token.New(token.Eof, "")
 	default:
 		if isLetter(l.ch) {
-			ident := l.readIdentifier()
-			t = token.New(token.IDENT, ident)
+			Ident := l.readIdentifier()
+			t = token.New(token.Ident, Ident)
 		} else {
-			t = token.New(token.ILLEGAL, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch))
 			l.readNextChar()
 		}
 	}
@@ -77,7 +125,7 @@ func (l *Lexer) NextToken() token.Token[any] {
 }
 
 func (l *Lexer) readIdentifier() string {
-	startPosition := l.position // Mark the start of the identifier
+	startPosition := l.position // Mark the start of the Identifier
 	for isLetter(l.ch) {
 		l.readNextChar()
 	}

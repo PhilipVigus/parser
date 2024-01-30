@@ -20,43 +20,55 @@ func (t Token[T]) String() string {
 }
 
 const (
-	ILLEGAL = iota
-	EOF
-	IDENT
-	ASSIGN
-	PLUS
-	MINUS
-	DIVIDE
-	MULTIPLY
-	COMMA
-	SEMICOLON
-	COLON
-	LPAREN
-	RPAREN
-	LBRACE
-	RBRACE
-	FUNCTION
-	LET
+	Illegal = iota
+	Eof
+	Ident
+	Assign
+	Plus
+	Minus
+	Divide
+	Multiply
+	Comma
+	FullStop
+	Semicolon
+	Colon
+	LParen
+	RParen
+	LBrace
+	RBrace
+	LBracket
+	RBracket
+	Percent
+	DoubleQuote
+	SingleQuote
+	Function
+	Let
 )
 
 var tokenTypes = map[Type]string{
-	ILLEGAL:   "ILLEGAL",
-	EOF:       "EOF",
-	IDENT:     "IDENT",
-	ASSIGN:    "ASSIGN",
-	PLUS:      "PLUS",
-	MINUS:     "MINUS",
-	DIVIDE:    "DIVIDE",
-	MULTIPLY:  "MULTIPLY",
-	COMMA:     "COMMA",
-	SEMICOLON: "SEMICOLON",
-	COLON:     "COLON",
-	LPAREN:    "LPAREN",
-	RPAREN:    "RPAREN",
-	LBRACE:    "LBRACE",
-	RBRACE:    "RBRACE",
-	FUNCTION:  "FUNCTION",
-	LET:       "LET",
+	Illegal:     "Illegal",
+	Eof:         "Eof",
+	Ident:       "Ident",
+	Assign:      "Assign",
+	Plus:        "Plus",
+	Minus:       "Minus",
+	Divide:      "Divide",
+	Multiply:    "Multiply",
+	Comma:       "Comma",
+	FullStop:    "FullStop",
+	Semicolon:   "Semicolon",
+	Colon:       "Colon",
+	LParen:      "LParen",
+	RParen:      "RParen",
+	LBrace:      "LBrace",
+	RBrace:      "RBrace",
+	LBracket:    "LBracket",
+	RBracket:    "RBracket",
+	Percent:     "Percent",
+	DoubleQuote: "DoubleQuote",
+	SingleQuote: "SingleQuote",
+	Function:    "Function",
+	Let:         "Let",
 }
 
 func GetTokenType[T any](t Token[T]) string {
