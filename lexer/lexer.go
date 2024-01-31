@@ -51,6 +51,18 @@ func (l *Lexer) readNextChar() {
 	l.readPosition++
 }
 
+func (l *Lexer) Tokenize() []token.Token[any] {
+	var tokens []token.Token[any]
+	for {
+		t := l.NextToken()
+		tokens = append(tokens, t)
+		if t.Type == token.Eof {
+			break
+		}
+	}
+	return tokens
+}
+
 func (l *Lexer) NextToken() token.Token[any] {
 	var t token.Token[any]
 
