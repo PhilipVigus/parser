@@ -85,6 +85,15 @@ func TestToken_New(t *testing.T) {
 			},
 		},
 		{
+			name: "Modulus",
+			t:    Modulus,
+			lit:  "Modulus",
+			expected: Token[any]{
+				Type:    Modulus,
+				Literal: "Modulus",
+			},
+		},
+		{
 			name: "Comma",
 			t:    Comma,
 			lit:  "Comma",
@@ -199,6 +208,87 @@ func TestToken_New(t *testing.T) {
 			expected: Token[any]{
 				Type:    SingleQuote,
 				Literal: "SingleQuote",
+			},
+		},
+		{
+			name: "GreaterThan",
+			t:    GreaterThan,
+			lit:  "GreaterThan",
+			expected: Token[any]{
+				Type:    GreaterThan,
+				Literal: "GreaterThan",
+			},
+		},
+		{
+			name: "LessThan",
+			t:    LessThan,
+			lit:  "LessThan",
+			expected: Token[any]{
+				Type:    LessThan,
+				Literal: "LessThan",
+			},
+		},
+		{
+			name: "GreaterThanOrEqual",
+			t:    GreaterThanOrEqual,
+			lit:  "GreaterThanOrEqual",
+			expected: Token[any]{
+				Type:    GreaterThanOrEqual,
+				Literal: "GreaterThanOrEqual",
+			},
+		},
+		{
+			name: "LessThanOrEqual",
+			t:    LessThanOrEqual,
+			lit:  "LessThanOrEqual",
+			expected: Token[any]{
+				Type:    LessThanOrEqual,
+				Literal: "LessThanOrEqual",
+			},
+		},
+		{
+			name: "Equal",
+			t:    Equal,
+			lit:  "Equal",
+			expected: Token[any]{
+				Type:    Equal,
+				Literal: "Equal",
+			},
+		},
+		{
+			name: "NotEqual",
+			t:    NotEqual,
+			lit:  "NotEqual",
+			expected: Token[any]{
+				Type:    NotEqual,
+				Literal: "NotEqual",
+			},
+		},
+		{
+			name: "And",
+			t:    And,
+			lit:  "And",
+			expected: Token[any]{
+				Type:    And,
+				Literal: "And",
+			},
+		},
+		{
+			name: "Or",
+			t:    Or,
+			lit:  "Or",
+			expected: Token[any]{
+				Type:    Or,
+				Literal: "Or",
+			},
+		},
+		{
+			name: "Not",
+			t:    Not,
+			lit:  "Not",
+			expected: Token[any]{
+				Type:    Not,
+				Literal: "Not",
 			},
 		},
 	}

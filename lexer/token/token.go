@@ -28,6 +28,7 @@ const (
 	Minus
 	Divide
 	Multiply
+	Modulus
 	Comma
 	FullStop
 	Semicolon
@@ -41,34 +42,49 @@ const (
 	Percent
 	DoubleQuote
 	SingleQuote
-	Function
-	Let
+	GreaterThan
+	LessThan
+	GreaterThanOrEqual
+	LessThanOrEqual
+	Equal
+	NotEqual
+	And
+	Or
+	Not
 )
 
 var tokenTypes = map[Type]string{
-	Illegal:     "Illegal",
-	Eof:         "Eof",
-	Ident:       "Ident",
-	Assign:      "Assign",
-	Plus:        "Plus",
-	Minus:       "Minus",
-	Divide:      "Divide",
-	Multiply:    "Multiply",
-	Comma:       "Comma",
-	FullStop:    "FullStop",
-	Semicolon:   "Semicolon",
-	Colon:       "Colon",
-	LParen:      "LParen",
-	RParen:      "RParen",
-	LBrace:      "LBrace",
-	RBrace:      "RBrace",
-	LBracket:    "LBracket",
-	RBracket:    "RBracket",
-	Percent:     "Percent",
-	DoubleQuote: "DoubleQuote",
-	SingleQuote: "SingleQuote",
-	Function:    "Function",
-	Let:         "Let",
+	Illegal:            "Illegal",
+	Eof:                "Eof",
+	Ident:              "Ident",
+	Assign:             "Assign",
+	Plus:               "Plus",
+	Minus:              "Minus",
+	Divide:             "Divide",
+	Multiply:           "Multiply",
+	Modulus:            "Modulus",
+	Comma:              "Comma",
+	FullStop:           "FullStop",
+	Semicolon:          "Semicolon",
+	Colon:              "Colon",
+	LParen:             "LParen",
+	RParen:             "RParen",
+	LBrace:             "LBrace",
+	RBrace:             "RBrace",
+	LBracket:           "LBracket",
+	RBracket:           "RBracket",
+	Percent:            "Percent",
+	DoubleQuote:        "DoubleQuote",
+	SingleQuote:        "SingleQuote",
+	GreaterThan:        "GreaterThan",
+	LessThan:           "LessThan",
+	GreaterThanOrEqual: "GreaterThanOrEqual",
+	LessThanOrEqual:    "LessThanOrEqual",
+	Equal:              "Equal",
+	NotEqual:           "NotEqual",
+	And:                "And",
+	Or:                 "Or",
+	Not:                "Not",
 }
 
 func GetTokenType[T any](t Token[T]) string {
