@@ -3,20 +3,20 @@ package token
 import "fmt"
 
 type Type int
-type Token[T any] struct {
-	Type    Type
-	Literal T
+type Token struct {
+	Type  Type
+	Value string
 }
 
-func New[T any](t Type, l T) Token[any] {
-	return Token[any]{
-		Type:    t,
-		Literal: l,
+func New(t Type, l string) Token {
+	return Token{
+		Type:  t,
+		Value: l,
 	}
 }
 
-func (t Token[T]) String() string {
-	return fmt.Sprintf("[ type: %s, literal: %v ]", GetTokenType(t), t.Literal)
+func (t Token) String() string {
+	return fmt.Sprintf("[ type: %s, value: %v ]", GetStringFromTokenType(t), t.Value)
 }
 
 const (
@@ -87,7 +87,52 @@ const (
 	Finally
 )
 
-var tokenTypes = map[Type]string{
+var keywordsToTypes = map[string]Type{
+	"if":         If,
+	"else":       Else,
+	"while":      While,
+	"do":         Do,
+	"for":        For,
+	"function":   Function,
+	"define":     Define,
+	"const":      Const,
+	"class":      Class,
+	"include":    Include,
+	"interface":  Interface,
+	"in":         In,
+	"break":      Break,
+	"continue":   Continue,
+	"catch":      Catch,
+	"try":        Try,
+	"switch":     Switch,
+	"case":       Case,
+	"default":    Default,
+	"enum":       Enum,
+	"export":     Export,
+	"new":        NewToken,
+	"throw":      Throw,
+	"extends":    Extends,
+	"implements": Implements,
+	"private":    Private,
+	"protected":  Protected,
+	"public":     Public,
+	"static":     Static,
+	"abstract":   Abstract,
+	"return":     Return,
+	"finally":    Finally,
+}
+
+func GetKeywordType(kw string) Type {
+	t, exists := keywordsToTypes[kw]
+
+	if exists {
+		return t
+	}
+
+	return Ident
+}
+
+var tokenTypeToString = map[Type]string{
 	Illegal:            "Illegal",
 	Eof:                "Eof",
 	Ident:              "Ident",
@@ -155,8 +200,8 @@ var tokenTypes = map[Type]string{
 	Finally:            "Finally",
 }
 
-func GetTokenType[T any](t Token[T]) string {
-	name, exists := tokenTypes[t.Type]
+func GetStringFromTokenType(t Token) string {
+	name, exists := tokenTypeToString[t.Type]
 
 	if exists {
 		return name

@@ -59,8 +59,8 @@ func (l *Lexer) peekNextChar() rune {
 	return c
 }
 
-func (l *Lexer) Tokenize() []token.Token[any] {
-	var tokens []token.Token[any]
+func (l *Lexer) Tokenize() []token.Token {
+	var tokens []token.Token
 	for {
 		t := l.NextToken()
 		tokens = append(tokens, t)
@@ -71,8 +71,8 @@ func (l *Lexer) Tokenize() []token.Token[any] {
 	return tokens
 }
 
-func (l *Lexer) NextToken() token.Token[any] {
-	var t token.Token[any]
+func (l *Lexer) NextToken() token.Token {
+	var t token.Token
 
 	switch l.ch {
 	case '=':
@@ -188,8 +188,7 @@ func (l *Lexer) NextToken() token.Token[any] {
 		t = token.New(token.Eof, "")
 	default:
 		if isLetter(l.ch) {
-			ident := l.readIdentifier()
-			t = token.New(token.Ident, ident)
+			t = l.readIdentifier()
 		} else if isDigit(l.ch) {
 			num, err := l.readNumber()
 
@@ -207,12 +206,14 @@ func (l *Lexer) NextToken() token.Token[any] {
 	return t
 }
 
-func (l *Lexer) readIdentifier() string {
-	startPosition := l.position // Mark the start of the Identifier
+func (l *Lexer) readIdentifier() token.Token {
+	startPosition := l.position
 	for isLetter(l.ch) {
 		l.readNextChar()
 	}
-	return l.input[startPosition:l.position]
+
+	str := l.input[startPosition:l.position]
+	return token.New(token.GetKeywordType(str), str)
 }
 
 func (l *Lexer) readNumber() (string, bool) {

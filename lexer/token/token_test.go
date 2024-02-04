@@ -9,403 +9,403 @@ func TestToken_New(t *testing.T) {
 	tests := []struct {
 		name     string
 		t        Type
-		lit      any
-		expected Token[any]
+		lit      string
+		expected Token
 	}{
 		{
 			name: "Illegal",
 			t:    Illegal,
 			lit:  "Illegal",
-			expected: Token[any]{
-				Type:    Illegal,
-				Literal: "Illegal",
+			expected: Token{
+				Type:  Illegal,
+				Value: "Illegal",
 			},
 		},
 		{
 			name: "Eof",
 			t:    Eof,
 			lit:  "Eof",
-			expected: Token[any]{
-				Type:    Eof,
-				Literal: "Eof",
+			expected: Token{
+				Type:  Eof,
+				Value: "Eof",
 			},
 		},
 		{
 			name: "Ident",
 			t:    Ident,
 			lit:  "Ident",
-			expected: Token[any]{
-				Type:    Ident,
-				Literal: "Ident",
+			expected: Token{
+				Type:  Ident,
+				Value: "Ident",
 			},
 		},
 		{
 			name: "Assign",
 			t:    Assign,
 			lit:  "Assign",
-			expected: Token[any]{
-				Type:    Assign,
-				Literal: "Assign",
+			expected: Token{
+				Type:  Assign,
+				Value: "Assign",
 			},
 		},
 		{
 			name: "Plus",
 			t:    Plus,
 			lit:  "Plus",
-			expected: Token[any]{
-				Type:    Plus,
-				Literal: "Plus",
+			expected: Token{
+				Type:  Plus,
+				Value: "Plus",
 			},
 		},
 		{
 			name: "Minus",
 			t:    Minus,
 			lit:  "Minus",
-			expected: Token[any]{
-				Type:    Minus,
-				Literal: "Minus",
+			expected: Token{
+				Type:  Minus,
+				Value: "Minus",
 			},
 		},
 		{
 			name: "Divide",
 			t:    Divide,
 			lit:  "Divide",
-			expected: Token[any]{
-				Type:    Divide,
-				Literal: "Divide",
+			expected: Token{
+				Type:  Divide,
+				Value: "Divide",
 			},
 		},
 		{
 			name: "Multiply",
 			t:    Multiply,
 			lit:  "Multiply",
-			expected: Token[any]{
-				Type:    Multiply,
-				Literal: "Multiply",
+			expected: Token{
+				Type:  Multiply,
+				Value: "Multiply",
 			},
 		},
 		{
 			name: "Modulus",
 			t:    Modulus,
 			lit:  "Modulus",
-			expected: Token[any]{
-				Type:    Modulus,
-				Literal: "Modulus",
+			expected: Token{
+				Type:  Modulus,
+				Value: "Modulus",
 			},
 		},
 		{
 			name: "Comma",
 			t:    Comma,
 			lit:  "Comma",
-			expected: Token[any]{
-				Type:    Comma,
-				Literal: "Comma",
+			expected: Token{
+				Type:  Comma,
+				Value: "Comma",
 			},
 		},
 		{
 			name: "FullStop",
 			t:    FullStop,
 			lit:  "FullStop",
-			expected: Token[any]{
-				Type:    FullStop,
-				Literal: "FullStop",
+			expected: Token{
+				Type:  FullStop,
+				Value: "FullStop",
 			},
 		},
 		{
 			name: "Semicolon",
 			t:    Semicolon,
 			lit:  "Semicolon",
-			expected: Token[any]{
-				Type:    Semicolon,
-				Literal: "Semicolon",
+			expected: Token{
+				Type:  Semicolon,
+				Value: "Semicolon",
 			},
 		},
 		{
 			name: "Colon",
 			t:    Colon,
 			lit:  "Colon",
-			expected: Token[any]{
-				Type:    Colon,
-				Literal: "Colon",
+			expected: Token{
+				Type:  Colon,
+				Value: "Colon",
 			},
 		},
 		{
 			name: "LParen",
 			t:    LParen,
 			lit:  "LParen",
-			expected: Token[any]{
-				Type:    LParen,
-				Literal: "LParen",
+			expected: Token{
+				Type:  LParen,
+				Value: "LParen",
 			},
 		},
 		{
 			name: "RParen",
 			t:    RParen,
 			lit:  "RParen",
-			expected: Token[any]{
-				Type:    RParen,
-				Literal: "RParen",
+			expected: Token{
+				Type:  RParen,
+				Value: "RParen",
 			},
 		},
 		{
 			name: "LBrace",
 			t:    LBrace,
 			lit:  "LBrace",
-			expected: Token[any]{
-				Type:    LBrace,
-				Literal: "LBrace",
+			expected: Token{
+				Type:  LBrace,
+				Value: "LBrace",
 			},
 		},
 		{
 			name: "RBrace",
 			t:    RBrace,
 			lit:  "RBrace",
-			expected: Token[any]{
-				Type:    RBrace,
-				Literal: "RBrace",
+			expected: Token{
+				Type:  RBrace,
+				Value: "RBrace",
 			},
 		},
 		{
 			name: "LBracket",
 			t:    LBracket,
 			lit:  "LBracket",
-			expected: Token[any]{
-				Type:    LBracket,
-				Literal: "LBracket",
+			expected: Token{
+				Type:  LBracket,
+				Value: "LBracket",
 			},
 		},
 		{
 			name: "RBracket",
 			t:    RBracket,
 			lit:  "RBracket",
-			expected: Token[any]{
-				Type:    RBracket,
-				Literal: "RBracket",
+			expected: Token{
+				Type:  RBracket,
+				Value: "RBracket",
 			},
 		},
 		{
 			name: "Percent",
 			t:    Percent,
 			lit:  "Percent",
-			expected: Token[any]{
-				Type:    Percent,
-				Literal: "Percent",
+			expected: Token{
+				Type:  Percent,
+				Value: "Percent",
 			},
 		},
 		{
 			name: "DoubleQuote",
 			t:    DoubleQuote,
 			lit:  "DoubleQuote",
-			expected: Token[any]{
-				Type:    DoubleQuote,
-				Literal: "DoubleQuote",
+			expected: Token{
+				Type:  DoubleQuote,
+				Value: "DoubleQuote",
 			},
 		},
 		{
 			name: "SingleQuote",
 			t:    SingleQuote,
 			lit:  "SingleQuote",
-			expected: Token[any]{
-				Type:    SingleQuote,
-				Literal: "SingleQuote",
+			expected: Token{
+				Type:  SingleQuote,
+				Value: "SingleQuote",
 			},
 		},
 		{
 			name: "GreaterThan",
 			t:    GreaterThan,
 			lit:  "GreaterThan",
-			expected: Token[any]{
-				Type:    GreaterThan,
-				Literal: "GreaterThan",
+			expected: Token{
+				Type:  GreaterThan,
+				Value: "GreaterThan",
 			},
 		},
 		{
 			name: "LessThan",
 			t:    LessThan,
 			lit:  "LessThan",
-			expected: Token[any]{
-				Type:    LessThan,
-				Literal: "LessThan",
+			expected: Token{
+				Type:  LessThan,
+				Value: "LessThan",
 			},
 		},
 		{
 			name: "GreaterThanOrEqual",
 			t:    GreaterThanOrEqual,
 			lit:  "GreaterThanOrEqual",
-			expected: Token[any]{
-				Type:    GreaterThanOrEqual,
-				Literal: "GreaterThanOrEqual",
+			expected: Token{
+				Type:  GreaterThanOrEqual,
+				Value: "GreaterThanOrEqual",
 			},
 		},
 		{
 			name: "LessThanOrEqual",
 			t:    LessThanOrEqual,
 			lit:  "LessThanOrEqual",
-			expected: Token[any]{
-				Type:    LessThanOrEqual,
-				Literal: "LessThanOrEqual",
+			expected: Token{
+				Type:  LessThanOrEqual,
+				Value: "LessThanOrEqual",
 			},
 		},
 		{
 			name: "Equal",
 			t:    Equal,
 			lit:  "Equal",
-			expected: Token[any]{
-				Type:    Equal,
-				Literal: "Equal",
+			expected: Token{
+				Type:  Equal,
+				Value: "Equal",
 			},
 		},
 		{
 			name: "NotEqual",
 			t:    NotEqual,
 			lit:  "NotEqual",
-			expected: Token[any]{
-				Type:    NotEqual,
-				Literal: "NotEqual",
+			expected: Token{
+				Type:  NotEqual,
+				Value: "NotEqual",
 			},
 		},
 		{
 			name: "And",
 			t:    And,
 			lit:  "And",
-			expected: Token[any]{
-				Type:    And,
-				Literal: "And",
+			expected: Token{
+				Type:  And,
+				Value: "And",
 			},
 		},
 		{
 			name: "Or",
 			t:    Or,
 			lit:  "Or",
-			expected: Token[any]{
-				Type:    Or,
-				Literal: "Or",
+			expected: Token{
+				Type:  Or,
+				Value: "Or",
 			},
 		},
 		{
 			name: "Not",
 			t:    Not,
 			lit:  "Not",
-			expected: Token[any]{
-				Type:    Not,
-				Literal: "Not",
+			expected: Token{
+				Type:  Not,
+				Value: "Not",
 			},
 		},
 		{
 			name: "Number",
 			t:    Number,
 			lit:  "Number",
-			expected: Token[any]{
-				Type:    Number,
-				Literal: "Number",
+			expected: Token{
+				Type:  Number,
+				Value: "Number",
 			},
 		},
 		{
 			name: "String",
 			t:    String,
 			lit:  "String",
-			expected: Token[any]{
-				Type:    String,
-				Literal: "String",
+			expected: Token{
+				Type:  String,
+				Value: "String",
 			},
 		},
 		{
 			name: "If",
 			t:    If,
 			lit:  "If",
-			expected: Token[any]{
-				Type:    If,
-				Literal: "If",
+			expected: Token{
+				Type:  If,
+				Value: "If",
 			},
 		},
 		{
 			name: "Else",
 			t:    Else,
 			lit:  "Else",
-			expected: Token[any]{
-				Type:    Else,
-				Literal: "Else",
+			expected: Token{
+				Type:  Else,
+				Value: "Else",
 			},
 		},
 		{
 			name: "While",
 			t:    While,
 			lit:  "While",
-			expected: Token[any]{
-				Type:    While,
-				Literal: "While",
+			expected: Token{
+				Type:  While,
+				Value: "While",
 			},
 		},
 		{
 			name: "Do",
 			t:    Do,
 			lit:  "Do",
-			expected: Token[any]{
-				Type:    Do,
-				Literal: "Do",
+			expected: Token{
+				Type:  Do,
+				Value: "Do",
 			},
 		},
 		{
 			name: "For",
 			t:    For,
 			lit:  "For",
-			expected: Token[any]{
-				Type:    For,
-				Literal: "For",
+			expected: Token{
+				Type:  For,
+				Value: "For",
 			},
 		},
 		{
 			name: "Function",
 			t:    Function,
 			lit:  "Function",
-			expected: Token[any]{
-				Type:    Function,
-				Literal: "Function",
+			expected: Token{
+				Type:  Function,
+				Value: "Function",
 			},
 		},
 		{
 			name: "Define",
 			t:    Define,
 			lit:  "Define",
-			expected: Token[any]{
-				Type:    Define,
-				Literal: "Define",
+			expected: Token{
+				Type:  Define,
+				Value: "Define",
 			},
 		},
 		{
 			name: "Const",
 			t:    Const,
 			lit:  "Const",
-			expected: Token[any]{
-				Type:    Const,
-				Literal: "Const",
+			expected: Token{
+				Type:  Const,
+				Value: "Const",
 			},
 		},
 		{
 			name: "Class",
 			t:    Class,
 			lit:  "Class",
-			expected: Token[any]{
-				Type:    Class,
-				Literal: "Class",
+			expected: Token{
+				Type:  Class,
+				Value: "Class",
 			},
 		},
 		{
 			name: "Include",
 			t:    Include,
 			lit:  "Include",
-			expected: Token[any]{
-				Type:    Include,
-				Literal: "Include",
+			expected: Token{
+				Type:  Include,
+				Value: "Include",
 			},
 		},
 		{
 			name: "Interface",
 			t:    Interface,
 			lit:  "Interface",
-			expected: Token[any]{
-				Type:    Interface,
-				Literal: "Interface",
+			expected: Token{
+				Type:  Interface,
+				Value: "Interface",
 			},
 		},
 	}
@@ -424,20 +424,20 @@ func TestToken_String(t *testing.T) {
 	tests := []struct {
 		name     string
 		t        Type
-		lit      any
+		lit      string
 		expected string
 	}{
 		{
 			name:     "Illegal",
 			t:        Illegal,
 			lit:      "Illegal",
-			expected: "[ type: Illegal, literal: Illegal ]",
+			expected: "[ type: Illegal, value: Illegal ]",
 		},
 		{
 			name:     "Eof",
 			t:        Eof,
 			lit:      "Eof",
-			expected: "[ type: Eof, literal: Eof ]",
+			expected: "[ type: Eof, value: Eof ]",
 		},
 	}
 
@@ -454,174 +454,174 @@ func TestToken_String(t *testing.T) {
 func TestGetTokenType(t *testing.T) {
 	tests := []struct {
 		name     string
-		t        Token[any]
+		t        Token
 		expected string
 	}{
 		{
 			name: "Illegal",
-			t: Token[any]{
-				Type:    Illegal,
-				Literal: "Illegal",
+			t: Token{
+				Type:  Illegal,
+				Value: "Illegal",
 			},
 			expected: "Illegal",
 		},
 		{
 			name: "Eof",
-			t: Token[any]{
-				Type:    Eof,
-				Literal: "Eof",
+			t: Token{
+				Type:  Eof,
+				Value: "Eof",
 			},
 			expected: "Eof",
 		},
 		{
 			name: "Ident",
-			t: Token[any]{
-				Type:    Ident,
-				Literal: "Ident",
+			t: Token{
+				Type:  Ident,
+				Value: "Ident",
 			},
 			expected: "Ident",
 		},
 		{
 			name: "Assign",
-			t: Token[any]{
-				Type:    Assign,
-				Literal: "Assign",
+			t: Token{
+				Type:  Assign,
+				Value: "Assign",
 			},
 			expected: "Assign",
 		},
 		{
 			name: "Plus",
-			t: Token[any]{
-				Type:    Plus,
-				Literal: "Plus",
+			t: Token{
+				Type:  Plus,
+				Value: "Plus",
 			},
 			expected: "Plus",
 		},
 		{
 			name: "Minus",
-			t: Token[any]{
-				Type:    Minus,
-				Literal: "Minus",
+			t: Token{
+				Type:  Minus,
+				Value: "Minus",
 			},
 			expected: "Minus",
 		},
 		{
 			name: "Divide",
-			t: Token[any]{
-				Type:    Divide,
-				Literal: "Divide",
+			t: Token{
+				Type:  Divide,
+				Value: "Divide",
 			},
 			expected: "Divide",
 		},
 		{
 			name: "Multiply",
-			t: Token[any]{
-				Type:    Multiply,
-				Literal: "Multiply",
+			t: Token{
+				Type:  Multiply,
+				Value: "Multiply",
 			},
 			expected: "Multiply",
 		},
 		{
 			name: "Comma",
-			t: Token[any]{
-				Type:    Comma,
-				Literal: "Comma",
+			t: Token{
+				Type:  Comma,
+				Value: "Comma",
 			},
 			expected: "Comma",
 		},
 		{
 			name: "FullStop",
-			t: Token[any]{
-				Type:    FullStop,
-				Literal: "FullStop",
+			t: Token{
+				Type:  FullStop,
+				Value: "FullStop",
 			},
 			expected: "FullStop",
 		},
 		{
 			name: "Semicolon",
-			t: Token[any]{
-				Type:    Semicolon,
-				Literal: "Semicolon",
+			t: Token{
+				Type:  Semicolon,
+				Value: "Semicolon",
 			},
 			expected: "Semicolon",
 		},
 		{
 			name: "Colon",
-			t: Token[any]{
-				Type:    Colon,
-				Literal: "Colon",
+			t: Token{
+				Type:  Colon,
+				Value: "Colon",
 			},
 			expected: "Colon",
 		},
 		{
 			name: "LParen",
-			t: Token[any]{
-				Type:    LParen,
-				Literal: "LParen",
+			t: Token{
+				Type:  LParen,
+				Value: "LParen",
 			},
 			expected: "LParen",
 		},
 		{
 			name: "RParen",
-			t: Token[any]{
-				Type:    RParen,
-				Literal: "RParen",
+			t: Token{
+				Type:  RParen,
+				Value: "RParen",
 			},
 			expected: "RParen",
 		},
 		{
 			name: "LBrace",
-			t: Token[any]{
-				Type:    LBrace,
-				Literal: "LBrace",
+			t: Token{
+				Type:  LBrace,
+				Value: "LBrace",
 			},
 			expected: "LBrace",
 		},
 		{
 			name: "RBrace",
-			t: Token[any]{
-				Type:    RBrace,
-				Literal: "RBrace",
+			t: Token{
+				Type:  RBrace,
+				Value: "RBrace",
 			},
 			expected: "RBrace",
 		},
 		{
 			name: "LBracket",
-			t: Token[any]{
-				Type:    LBracket,
-				Literal: "LBracket",
+			t: Token{
+				Type:  LBracket,
+				Value: "LBracket",
 			},
 			expected: "LBracket",
 		},
 		{
 			name: "RBracket",
-			t: Token[any]{
-				Type:    RBracket,
-				Literal: "RBracket",
+			t: Token{
+				Type:  RBracket,
+				Value: "RBracket",
 			},
 			expected: "RBracket",
 		},
 		{
 			name: "Percent",
-			t: Token[any]{
-				Type:    Percent,
-				Literal: "Percent",
+			t: Token{
+				Type:  Percent,
+				Value: "Percent",
 			},
 			expected: "Percent",
 		},
 		{
 			name: "DoubleQuote",
-			t: Token[any]{
-				Type:    DoubleQuote,
-				Literal: "DoubleQuote",
+			t: Token{
+				Type:  DoubleQuote,
+				Value: "DoubleQuote",
 			},
 			expected: "DoubleQuote",
 		},
 		{
 			name: "SingleQuote",
-			t: Token[any]{
-				Type:    SingleQuote,
-				Literal: "SingleQuote",
+			t: Token{
+				Type:  SingleQuote,
+				Value: "SingleQuote",
 			},
 			expected: "SingleQuote",
 		},
@@ -629,7 +629,7 @@ func TestGetTokenType(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := GetTokenType(tt.t)
+			actual := GetStringFromTokenType(tt.t)
 			if !reflect.DeepEqual(actual, tt.expected) {
 				t.Errorf("Expected: %v, Actual: %v", tt.expected, actual)
 			}
