@@ -309,6 +309,105 @@ func TestToken_New(t *testing.T) {
 				Literal: "String",
 			},
 		},
+		{
+			name: "If",
+			t:    If,
+			lit:  "If",
+			expected: Token[any]{
+				Type:    If,
+				Literal: "If",
+			},
+		},
+		{
+			name: "Else",
+			t:    Else,
+			lit:  "Else",
+			expected: Token[any]{
+				Type:    Else,
+				Literal: "Else",
+			},
+		},
+		{
+			name: "While",
+			t:    While,
+			lit:  "While",
+			expected: Token[any]{
+				Type:    While,
+				Literal: "While",
+			},
+		},
+		{
+			name: "Do",
+			t:    Do,
+			lit:  "Do",
+			expected: Token[any]{
+				Type:    Do,
+				Literal: "Do",
+			},
+		},
+		{
+			name: "For",
+			t:    For,
+			lit:  "For",
+			expected: Token[any]{
+				Type:    For,
+				Literal: "For",
+			},
+		},
+		{
+			name: "Function",
+			t:    Function,
+			lit:  "Function",
+			expected: Token[any]{
+				Type:    Function,
+				Literal: "Function",
+			},
+		},
+		{
+			name: "Define",
+			t:    Define,
+			lit:  "Define",
+			expected: Token[any]{
+				Type:    Define,
+				Literal: "Define",
+			},
+		},
+		{
+			name: "Const",
+			t:    Const,
+			lit:  "Const",
+			expected: Token[any]{
+				Type:    Const,
+				Literal: "Const",
+			},
+		},
+		{
+			name: "Class",
+			t:    Class,
+			lit:  "Class",
+			expected: Token[any]{
+				Type:    Class,
+				Literal: "Class",
+			},
+		},
+		{
+			name: "Include",
+			t:    Include,
+			lit:  "Include",
+			expected: Token[any]{
+				Type:    Include,
+				Literal: "Include",
+			},
+		},
+		{
+			name: "Interface",
+			t:    Interface,
+			lit:  "Interface",
+			expected: Token[any]{
+				Type:    Interface,
+				Literal: "Interface",
+			},
+		},
 	}
 
 	for _, tt := range tests {

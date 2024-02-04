@@ -53,6 +53,38 @@ const (
 	Not
 	Number
 	String
+	If
+	Else
+	While
+	Do
+	For
+	Function
+	Define
+	Const
+	Class
+	Include
+	Interface
+	In
+	Break
+	Continue
+	Catch
+	Try
+	Switch
+	Case
+	Default
+	Enum
+	Export
+	NewToken
+	Throw
+	Extends
+	Implements
+	Private
+	Protected
+	Public
+	Static
+	Abstract
+	Return
+	Finally
 )
 
 var tokenTypes = map[Type]string{
@@ -89,6 +121,38 @@ var tokenTypes = map[Type]string{
 	Not:                "Not",
 	Number:             "Number",
 	String:             "String",
+	If:                 "If",
+	Else:               "Else",
+	While:              "While",
+	Do:                 "Do",
+	For:                "For",
+	Function:           "Function",
+	Define:             "Define",
+	Const:              "Const",
+	Class:              "Class",
+	Include:            "Include",
+	Interface:          "Interface",
+	In:                 "In",
+	Break:              "Break",
+	Continue:           "Continue",
+	Catch:              "Catch",
+	Try:                "Try",
+	Switch:             "Switch",
+	Case:               "Case",
+	Default:            "Default",
+	Enum:               "Enum",
+	Export:             "Export",
+	NewToken:           "New",
+	Throw:              "Throw",
+	Extends:            "Extends",
+	Implements:         "Implements",
+	Private:            "Private",
+	Protected:          "Protected",
+	Public:             "Public",
+	Static:             "Static",
+	Abstract:           "Abstract",
+	Return:             "Return",
+	Finally:            "Finally",
 }
 
 func GetTokenType[T any](t Token[T]) string {
