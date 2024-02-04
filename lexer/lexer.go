@@ -178,11 +178,16 @@ func (l *Lexer) NextToken() token.Token[any] {
 		t = token.New(token.Eof, "")
 	default:
 		if isLetter(l.ch) {
-			Ident := l.readIdentifier()
-			t = token.New(token.Ident, Ident)
+			ident := l.readIdentifier()
+			t = token.New(token.Ident, ident)
 		} else if isDigit(l.ch) {
-			Num := l.readNumber()
-			t = token.New(token.Number, Num)
+			num, err := l.readNumber()
+
+			if err {
+				t = token.New(token.Illegal, num)
+			} else {
+				t = token.New(token.Number, num)
+			}
 		} else {
 			t = token.New(token.Illegal, string(l.ch))
 			l.readNextChar()
@@ -201,13 +206,17 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[startPosition:l.position]
 }
 
-func (l *Lexer) readNumber() string {
+func (l *Lexer) readNumber() (string, bool) {
+	haveReadDot := false
 	startPosition := l.position // Mark the start of the Number
-	for isDigit(l.ch) {
+	for isDigit(l.ch) || (l.ch == '.' && !haveReadDot && isDigit(l.peekNextChar())) {
+		if l.ch == '.' {
+			haveReadDot = true
+		}
 		l.readNextChar()
 	}
-	// No need to adjust l.position or l.readPosition here
-	return l.input[startPosition:l.position]
+
+	return l.input[startPosition:l.position], l.input[l.position-1] == '.'
 }
 
 func isLetter(ch rune) bool {

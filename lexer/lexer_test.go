@@ -87,6 +87,20 @@ func TestLexer_Tokenize(t *testing.T) {
 			},
 		},
 		{
+			name:  "decimal number token",
+			input: "0.123",
+			expected: []token.Token[any]{
+				{
+					Type:    token.Number,
+					Literal: "0.123",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
 			name:  "Single identifier",
 			input: "ident",
 			expected: []token.Token[any]{
