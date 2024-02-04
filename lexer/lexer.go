@@ -180,6 +180,9 @@ func (l *Lexer) NextToken() token.Token[any] {
 		if isLetter(l.ch) {
 			Ident := l.readIdentifier()
 			t = token.New(token.Ident, Ident)
+		} else if isDigit(l.ch) {
+			Num := l.readNumber()
+			t = token.New(token.Number, Num)
 		} else {
 			t = token.New(token.Illegal, string(l.ch))
 			l.readNextChar()
@@ -198,6 +201,19 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[startPosition:l.position]
 }
 
+func (l *Lexer) readNumber() string {
+	startPosition := l.position // Mark the start of the Number
+	for isDigit(l.ch) {
+		l.readNextChar()
+	}
+	// No need to adjust l.position or l.readPosition here
+	return l.input[startPosition:l.position]
+}
+
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isDigit(ch rune) bool {
+	return '0' <= ch && ch <= '9'
 }

@@ -55,6 +55,38 @@ func TestLexer_Tokenize(t *testing.T) {
 			},
 		},
 		{
+			name:  "Number token",
+			input: "123",
+			expected: []token.Token[any]{
+				{
+					Type:    token.Number,
+					Literal: "123",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "Positive number token",
+			input: "+123",
+			expected: []token.Token[any]{
+				{
+					Type:    token.Plus,
+					Literal: "+",
+				},
+				{
+					Type:    token.Number,
+					Literal: "123",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
 			name:  "Single identifier",
 			input: "ident",
 			expected: []token.Token[any]{
