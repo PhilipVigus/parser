@@ -51,6 +51,14 @@ func (l *Lexer) readNextChar() {
 	l.readPosition++
 }
 
+func (l *Lexer) peekNextChar() rune {
+	if l.readPosition >= l.inputLength {
+		return 0
+	}
+	c, _ := utf8.DecodeRuneInString(l.input[l.readPosition:])
+	return c
+}
+
 func (l *Lexer) Tokenize() []token.Token[any] {
 	var tokens []token.Token[any]
 	for {
@@ -68,7 +76,12 @@ func (l *Lexer) NextToken() token.Token[any] {
 
 	switch l.ch {
 	case '=':
-		t = token.New(token.Assign, "=")
+		if l.peekNextChar() == '=' {
+			l.readNextChar()
+			t = token.New(token.Equal, "==")
+		} else {
+			t = token.New(token.Assign, "=")
+		}
 		l.readNextChar()
 	case '+':
 		t = token.New(token.Plus, "+")
@@ -120,6 +133,30 @@ func (l *Lexer) NextToken() token.Token[any] {
 		l.readNextChar()
 	case '\'':
 		t = token.New(token.SingleQuote, "'")
+		l.readNextChar()
+	case '>':
+		if l.peekNextChar() == '=' {
+			l.readNextChar()
+			t = token.New(token.GreaterThanOrEqual, ">=")
+		} else {
+			t = token.New(token.GreaterThan, ">")
+		}
+		l.readNextChar()
+	case '<':
+		if l.peekNextChar() == '=' {
+			l.readNextChar()
+			t = token.New(token.LessThanOrEqual, "<=")
+		} else {
+			t = token.New(token.LessThan, "<")
+		}
+		l.readNextChar()
+	case '!':
+		if l.peekNextChar() == '=' {
+			l.readNextChar()
+			t = token.New(token.NotEqual, "!=")
+		} else {
+			t = token.New(token.Not, "!")
+		}
 		l.readNextChar()
 	case 0:
 		t = token.New(token.Eof, "")

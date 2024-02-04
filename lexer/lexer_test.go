@@ -27,6 +27,34 @@ func TestLexer_Tokenize(t *testing.T) {
 			},
 		},
 		{
+			name:  "Greater than or equal token",
+			input: ">=",
+			expected: []token.Token[any]{
+				{
+					Type:    token.GreaterThanOrEqual,
+					Literal: ">=",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "Less than or equal token",
+			input: "<=",
+			expected: []token.Token[any]{
+				{
+					Type:    token.LessThanOrEqual,
+					Literal: "<=",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
 			name:  "Single identifier",
 			input: "ident",
 			expected: []token.Token[any]{
