@@ -300,6 +300,15 @@ func TestToken_New(t *testing.T) {
 				Literal: "Number",
 			},
 		},
+		{
+			name: "String",
+			t:    String,
+			lit:  "String",
+			expected: Token[any]{
+				Type:    String,
+				Literal: "String",
+			},
+		},
 	}
 
 	for _, tt := range tests {

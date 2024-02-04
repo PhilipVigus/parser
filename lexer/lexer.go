@@ -128,12 +128,6 @@ func (l *Lexer) NextToken() token.Token[any] {
 	case '%':
 		t = token.New(token.Percent, "%")
 		l.readNextChar()
-	case '"':
-		t = token.New(token.DoubleQuote, "\"")
-		l.readNextChar()
-	case '\'':
-		t = token.New(token.SingleQuote, "'")
-		l.readNextChar()
 	case '>':
 		if l.peekNextChar() == '=' {
 			l.readNextChar()
@@ -174,6 +168,22 @@ func (l *Lexer) NextToken() token.Token[any] {
 			t = token.New(token.Illegal, string(l.ch))
 		}
 		l.readNextChar()
+	case '"':
+		str, err := l.readString('"')
+		if err {
+			t = token.New(token.Illegal, str)
+		} else {
+			t = token.New(token.String, str)
+		}
+		l.readNextChar()
+	case '\'':
+		str, err := l.readString('\'')
+		if err {
+			t = token.New(token.Illegal, str)
+		} else {
+			t = token.New(token.String, str)
+		}
+		l.readNextChar()
 	case 0:
 		t = token.New(token.Eof, "")
 	default:
@@ -202,7 +212,6 @@ func (l *Lexer) readIdentifier() string {
 	for isLetter(l.ch) {
 		l.readNextChar()
 	}
-	// No need to adjust l.position or l.readPosition here
 	return l.input[startPosition:l.position]
 }
 
@@ -217,6 +226,20 @@ func (l *Lexer) readNumber() (string, bool) {
 	}
 
 	return l.input[startPosition:l.position], l.input[l.position-1] == '.'
+}
+
+func (l *Lexer) readString(ch rune) (string, bool) {
+	startPosition := l.position + 1
+	for {
+		l.readNextChar()
+		if l.ch == ch || l.ch == 0 {
+			break
+		}
+	}
+	if l.ch == 0 {
+		startPosition--
+	}
+	return l.input[startPosition:l.position], l.ch == 0
 }
 
 func isLetter(ch rune) bool {

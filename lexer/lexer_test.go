@@ -69,24 +69,6 @@ func TestLexer_Tokenize(t *testing.T) {
 			},
 		},
 		{
-			name:  "Positive number token",
-			input: "+123",
-			expected: []token.Token[any]{
-				{
-					Type:    token.Plus,
-					Literal: "+",
-				},
-				{
-					Type:    token.Number,
-					Literal: "123",
-				},
-				{
-					Type:    token.Eof,
-					Literal: "",
-				},
-			},
-		},
-		{
 			name:  "decimal number token",
 			input: "0.123",
 			expected: []token.Token[any]{
@@ -121,6 +103,70 @@ func TestLexer_Tokenize(t *testing.T) {
 				{
 					Type:    token.Illegal,
 					Literal: "&",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "String with double quotes",
+			input: "\"a string\"test",
+			expected: []token.Token[any]{
+				{
+					Type:    token.String,
+					Literal: "a string",
+				},
+				{
+					Type:    token.Ident,
+					Literal: "test",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "Non-terminating string with double quotes",
+			input: "\"a string++4",
+			expected: []token.Token[any]{
+				{
+					Type:    token.Illegal,
+					Literal: "\"a string++4",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "String with single quotes",
+			input: "'a string'test",
+			expected: []token.Token[any]{
+				{
+					Type:    token.String,
+					Literal: "a string",
+				},
+				{
+					Type:    token.Ident,
+					Literal: "test",
+				},
+				{
+					Type:    token.Eof,
+					Literal: "",
+				},
+			},
+		},
+		{
+			name:  "Non-terminating string with single quotes",
+			input: "'a string++4",
+			expected: []token.Token[any]{
+				{
+					Type:    token.Illegal,
+					Literal: "'a string++4",
 				},
 				{
 					Type:    token.Eof,

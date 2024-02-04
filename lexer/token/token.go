@@ -52,6 +52,7 @@ const (
 	Or
 	Not
 	Number
+	String
 )
 
 var tokenTypes = map[Type]string{
@@ -87,6 +88,7 @@ var tokenTypes = map[Type]string{
 	Or:                 "Or",
 	Not:                "Not",
 	Number:             "Number",
+	String:             "String",
 }
 
 func GetTokenType[T any](t Token[T]) string {
