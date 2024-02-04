@@ -158,6 +158,22 @@ func (l *Lexer) NextToken() token.Token[any] {
 			t = token.New(token.Not, "!")
 		}
 		l.readNextChar()
+	case '&':
+		if l.peekNextChar() == '&' {
+			l.readNextChar()
+			t = token.New(token.And, "&&")
+		} else {
+			t = token.New(token.Illegal, string(l.ch))
+		}
+		l.readNextChar()
+	case '|':
+		if l.peekNextChar() == '|' {
+			l.readNextChar()
+			t = token.New(token.Or, "||")
+		} else {
+			t = token.New(token.Illegal, string(l.ch))
+		}
+		l.readNextChar()
 	case 0:
 		t = token.New(token.Eof, "")
 	default:
