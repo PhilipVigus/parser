@@ -17,7 +17,6 @@ type Lexer struct {
 	input        string
 	inputLength  int
 	ch           rune
-	width        int
 }
 
 func New(r io.Reader) *Lexer {
@@ -31,7 +30,7 @@ func New(r io.Reader) *Lexer {
 func (l *Lexer) readNextChar() {
 	var err error
 
-	l.ch, l.width, err = l.reader.ReadRune()
+	l.ch, _, err = l.reader.ReadRune()
 
 	if err == nil {
 		return
@@ -39,7 +38,6 @@ func (l *Lexer) readNextChar() {
 
 	if err == io.EOF {
 		l.ch = 0
-		l.width = 0
 	} else {
 		panic(err)
 	}
