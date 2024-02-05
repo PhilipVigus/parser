@@ -3,6 +3,7 @@ package lexer
 import (
 	"parser/lexer/token"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -130,11 +131,11 @@ func TestLexer_Tokenize(t *testing.T) {
 		},
 		{
 			name:  "Non-terminating string with double quotes",
-			input: "\"a string++4",
+			input: "\"test",
 			expected: []token.Token{
 				{
 					Type:  token.Illegal,
-					Value: "\"a string++4",
+					Value: "\"test",
 				},
 				{
 					Type:  token.Eof,
@@ -212,10 +213,7 @@ func TestLexer_Tokenize(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l, err := New(tt.input)
-			if err != nil {
-				t.Fatalf("Lexer creation failed: %v", err)
-			}
+			l := New(strings.NewReader(tt.input))
 
 			tokens := l.Tokenize()
 			if !reflect.DeepEqual(tokens, tt.expected) {

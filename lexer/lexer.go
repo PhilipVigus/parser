@@ -1,62 +1,64 @@
 package lexer
 
 import (
-	"fmt"
+	"bufio"
+	"errors"
+	"io"
 	"parser/lexer/token"
-	"unicode/utf8"
+	"strings"
+	"unicode"
 )
 
 type Lexer struct {
+	reader *bufio.Reader
+
 	position     int
 	readPosition int
 	input        string
 	inputLength  int
 	ch           rune
+	width        int
 }
 
-func New(s string) (*Lexer, error) {
-	if s == "" {
-		return nil, fmt.Errorf("empty input string")
-	}
+func New(r io.Reader) *Lexer {
 	l := &Lexer{
-		input:       s,
-		inputLength: utf8.RuneCountInString(s),
+		reader: bufio.NewReader(r),
 	}
 	l.readNextChar()
-	return l, nil
+	return l
 }
 
 func (l *Lexer) readNextChar() {
-	if l.readPosition >= l.inputLength {
-		l.position = l.readPosition
-		l.readPosition++
+	var err error
 
-		l.ch = 0
+	l.ch, l.width, err = l.reader.ReadRune()
+
+	if err == nil {
 		return
 	}
 
-	c, size := utf8.DecodeRuneInString(l.input[l.readPosition:])
-
-	if c == utf8.RuneError {
-		if size == 0 {
-			l.ch = 0
-		} else {
-			l.ch = utf8.RuneError
-		}
+	if err == io.EOF {
+		l.ch = 0
+		l.width = 0
 	} else {
-		l.ch = c
+		panic(err)
 	}
-
-	l.position = l.readPosition
-	l.readPosition++
 }
 
 func (l *Lexer) peekNextChar() rune {
-	if l.readPosition >= l.inputLength {
-		return 0
+	r, _, err := l.reader.ReadRune()
+	if err != nil {
+		if err == io.EOF {
+			return 0
+		}
+		panic(err)
 	}
-	c, _ := utf8.DecodeRuneInString(l.input[l.readPosition:])
-	return c
+
+	err = l.reader.UnreadRune()
+	if err != nil {
+		panic(err)
+	}
+	return r
 }
 
 func (l *Lexer) Tokenize() []token.Token {
@@ -192,10 +194,10 @@ func (l *Lexer) NextToken() token.Token {
 		} else if isDigit(l.ch) {
 			num, err := l.readNumber()
 
-			if err {
-				t = token.New(token.Illegal, num)
-			} else {
+			if err == nil {
 				t = token.New(token.Number, num)
+			} else {
+				t = token.New(token.Illegal, num)
 			}
 		} else {
 			t = token.New(token.Illegal, string(l.ch))
@@ -207,40 +209,68 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func (l *Lexer) readIdentifier() token.Token {
-	startPosition := l.position
-	for isLetter(l.ch) {
+	var builder strings.Builder
+	for unicode.IsLetter(l.ch) || l.ch == '_' {
+		builder.WriteRune(l.ch)
 		l.readNextChar()
 	}
+	identifier := builder.String()
 
-	str := l.input[startPosition:l.position]
-	return token.New(token.GetKeywordType(str), str)
+	return token.New(token.GetKeywordType(identifier), identifier)
 }
 
-func (l *Lexer) readNumber() (string, bool) {
+func (l *Lexer) readNumber() (string, error) {
+	var builder strings.Builder
 	haveReadDot := false
-	startPosition := l.position // Mark the start of the Number
-	for isDigit(l.ch) || (l.ch == '.' && !haveReadDot && isDigit(l.peekNextChar())) {
+
+	for unicode.IsDigit(l.ch) || (l.ch == '.' && !haveReadDot && unicode.IsDigit(l.peekNextChar())) {
 		if l.ch == '.' {
+			if haveReadDot {
+				break
+			}
 			haveReadDot = true
 		}
+		builder.WriteRune(l.ch)
 		l.readNextChar()
 	}
 
-	return l.input[startPosition:l.position], l.input[l.position-1] == '.'
+	str := builder.String()
+
+	if l.endsWithDot(str, haveReadDot) {
+		return str, errors.New("number ends with a dot")
+	}
+	return str, nil
+}
+
+func (l *Lexer) endsWithDot(str string, haveReadDot bool) bool {
+	notEmpty := len(str) > 0
+	lastCharIsDot := str[len(str)-1] == '.'
+	endsWithDot := haveReadDot && notEmpty && lastCharIsDot
+	return endsWithDot
 }
 
 func (l *Lexer) readString(ch rune) (string, bool) {
-	startPosition := l.position + 1
+	var builder strings.Builder
+
+	initialQuote := l.ch
+
+	l.readNextChar()
+
 	for {
-		l.readNextChar()
 		if l.ch == ch || l.ch == 0 {
 			break
 		}
+		builder.WriteRune(l.ch)
+		l.readNextChar()
 	}
+
+	s := builder.String()
+
 	if l.ch == 0 {
-		startPosition--
+		s = string(initialQuote) + builder.String()
 	}
-	return l.input[startPosition:l.position], l.ch == 0
+
+	return s, l.ch == 0
 }
 
 func isLetter(ch rune) bool {
