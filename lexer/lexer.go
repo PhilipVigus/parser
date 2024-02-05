@@ -29,7 +29,6 @@ func New(r io.Reader) *Lexer {
 
 func (l *Lexer) readNextChar() {
 	var err error
-
 	l.ch, _, err = l.reader.ReadRune()
 
 	if err == nil {
@@ -43,20 +42,20 @@ func (l *Lexer) readNextChar() {
 	}
 }
 
-func (l *Lexer) peekNextChar() rune {
+func (l *Lexer) peekNextChar() (rune, error) {
 	r, _, err := l.reader.ReadRune()
 	if err != nil {
 		if err == io.EOF {
-			return 0
+			return 0, nil
 		}
-		panic(err)
+		return 0, err
 	}
 
-	err = l.reader.UnreadRune()
-	if err != nil {
-		panic(err)
+	if err := l.reader.UnreadRune(); err != nil {
+		return 0, err
 	}
-	return r
+
+	return r, nil
 }
 
 func (l *Lexer) Tokenize() []token.Token {
@@ -76,7 +75,15 @@ func (l *Lexer) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		if l.peekNextChar() == '=' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '=' {
 			l.readNextChar()
 			t = token.New(token.Equal, "==")
 		} else {
@@ -129,7 +136,15 @@ func (l *Lexer) NextToken() token.Token {
 		t = token.New(token.Percent, "%")
 		l.readNextChar()
 	case '>':
-		if l.peekNextChar() == '=' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '=' {
 			l.readNextChar()
 			t = token.New(token.GreaterThanOrEqual, ">=")
 		} else {
@@ -137,7 +152,15 @@ func (l *Lexer) NextToken() token.Token {
 		}
 		l.readNextChar()
 	case '<':
-		if l.peekNextChar() == '=' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '=' {
 			l.readNextChar()
 			t = token.New(token.LessThanOrEqual, "<=")
 		} else {
@@ -145,7 +168,15 @@ func (l *Lexer) NextToken() token.Token {
 		}
 		l.readNextChar()
 	case '!':
-		if l.peekNextChar() == '=' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '=' {
 			l.readNextChar()
 			t = token.New(token.NotEqual, "!=")
 		} else {
@@ -153,7 +184,15 @@ func (l *Lexer) NextToken() token.Token {
 		}
 		l.readNextChar()
 	case '&':
-		if l.peekNextChar() == '&' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '&' {
 			l.readNextChar()
 			t = token.New(token.And, "&&")
 		} else {
@@ -161,7 +200,15 @@ func (l *Lexer) NextToken() token.Token {
 		}
 		l.readNextChar()
 	case '|':
-		if l.peekNextChar() == '|' {
+		nextChar, err := l.peekNextChar()
+
+		if err != nil {
+			t = token.New(token.Illegal, string(l.ch))
+			l.readNextChar()
+			break
+		}
+
+		if nextChar == '|' {
 			l.readNextChar()
 			t = token.New(token.Or, "||")
 		} else {
@@ -189,7 +236,7 @@ func (l *Lexer) NextToken() token.Token {
 	default:
 		if isLetter(l.ch) {
 			t = l.readIdentifier()
-		} else if isDigit(l.ch) {
+		} else if unicode.IsDigit(l.ch) {
 			num, err := l.readNumber()
 
 			if err == nil {
@@ -221,26 +268,39 @@ func (l *Lexer) readNumber() (string, error) {
 	var builder strings.Builder
 	haveReadDot := false
 
-	for unicode.IsDigit(l.ch) || (l.ch == '.' && !haveReadDot && unicode.IsDigit(l.peekNextChar())) {
-		if l.ch == '.' {
-			if haveReadDot {
+	for {
+		isDigit := unicode.IsDigit(l.ch)
+		if l.ch == '.' && !haveReadDot {
+			nextChar, err := l.peekNextChar()
+			if err != nil {
+				if errors.Is(err, io.EOF) {
+					break
+				}
+				return "", err
+			}
+
+			if !unicode.IsDigit(nextChar) {
 				break
 			}
 			haveReadDot = true
+		} else if !isDigit {
+			break
 		}
+
 		builder.WriteRune(l.ch)
 		l.readNextChar()
 	}
 
 	str := builder.String()
 
-	if l.endsWithDot(str, haveReadDot) {
+	if l.numEndsWithDot(str, haveReadDot) {
 		return str, errors.New("number ends with a dot")
 	}
+
 	return str, nil
 }
 
-func (l *Lexer) endsWithDot(str string, haveReadDot bool) bool {
+func (l *Lexer) numEndsWithDot(str string, haveReadDot bool) bool {
 	notEmpty := len(str) > 0
 	lastCharIsDot := str[len(str)-1] == '.'
 	endsWithDot := haveReadDot && notEmpty && lastCharIsDot
@@ -273,8 +333,4 @@ func (l *Lexer) readString(ch rune) (string, bool) {
 
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
-}
-
-func isDigit(ch rune) bool {
-	return '0' <= ch && ch <= '9'
 }
