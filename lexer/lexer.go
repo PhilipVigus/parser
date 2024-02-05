@@ -269,22 +269,28 @@ func (l *Lexer) readNumber() (string, error) {
 	haveReadDot := false
 
 	for {
-		isDigit := unicode.IsDigit(l.ch)
-		if l.ch == '.' && !haveReadDot {
+		// Check if the current character is not a digit and not a valid dot condition.
+		if !unicode.IsDigit(l.ch) && (l.ch != '.' || haveReadDot) {
+			break
+		}
+
+		// Handle dot followed by a digit
+		if l.ch == '.' {
 			nextChar, err := l.peekNextChar()
 			if err != nil {
 				if errors.Is(err, io.EOF) {
+					// If EOF, it's a valid end of number, break the loop
 					break
 				}
+				// Return error immediately if not EOF
 				return "", err
 			}
 
 			if !unicode.IsDigit(nextChar) {
 				break
 			}
+
 			haveReadDot = true
-		} else if !isDigit {
-			break
 		}
 
 		builder.WriteRune(l.ch)
@@ -293,10 +299,12 @@ func (l *Lexer) readNumber() (string, error) {
 
 	str := builder.String()
 
+	// Check for invalid number format
 	if l.numEndsWithDot(str, haveReadDot) {
 		return str, errors.New("number ends with a dot")
 	}
 
+	// Return the number string and no error
 	return str, nil
 }
 
