@@ -1,13 +1,14 @@
 package lexer
 
 import (
+	"os"
 	"parser/lexer/token"
 	"reflect"
 	"strings"
 	"testing"
 )
 
-func TestLexer_Tokenize(t *testing.T) {
+func TestLexer_Tokenize_FromString(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    string
@@ -214,6 +215,63 @@ func TestLexer_Tokenize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			l := New(strings.NewReader(tt.input))
+
+			tokens := l.Tokenize()
+			if !reflect.DeepEqual(tokens, tt.expected) {
+				t.Errorf("Tokenize() = %v, want %v", tokens, tt.expected)
+			}
+		})
+	}
+}
+
+func TestLexer_Tokenize_FromFile(t *testing.T) {
+	tests := []struct {
+		name     string
+		filePath string
+		expected []token.Token
+	}{
+		{
+			name:     "Single line",
+			filePath: "testdata/single_line.txt",
+			expected: []token.Token{
+				{
+					Type:  token.Ident,
+					Value: "x",
+				},
+				{
+					Type:  token.Plus,
+					Value: "+",
+				},
+				{
+					Type:  token.Number,
+					Value: "5",
+				},
+				{
+					Type:  token.Semicolon,
+					Value: ";",
+				},
+				{
+					Type:  token.Eof,
+					Value: "",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			file, err := os.Open(tt.filePath)
+			if err != nil {
+				t.Errorf("Error opening test fixture: %v", err)
+			}
+			defer func(file *os.File) {
+				err := file.Close()
+				if err != nil {
+					t.Errorf("Error closing test fixture: %v", err)
+				}
+			}(file)
+
+			l := New(file)
 
 			tokens := l.Tokenize()
 			if !reflect.DeepEqual(tokens, tt.expected) {
