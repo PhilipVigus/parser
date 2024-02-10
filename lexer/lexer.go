@@ -1,3 +1,4 @@
+// Package lexer provides a lexer for the  programming language.
 package lexer
 
 import (
@@ -9,28 +10,28 @@ import (
 	"unicode"
 )
 
+// Lexer is a lexer for the programming language.
 type Lexer struct {
+	// reader is the buffer containing the input string.
 	reader *bufio.Reader
-
-	position     int
-	readPosition int
-	input        string
-	inputLength  int
-	ch           rune
+	// ch is the current character being read.
+	ch rune
 }
 
+// New creates a new lexer from the given reader.
 func New(r io.Reader) *Lexer {
 	l := &Lexer{
 		reader: bufio.NewReader(r),
 	}
+	// Read the first character to initialize the lexer.
 	l.readNextChar()
 	return l
 }
 
+// readNextChar reads the next character from the input string.
 func (l *Lexer) readNextChar() {
 	var err error
 	l.ch, _, err = l.reader.ReadRune()
-
 	if err == nil {
 		return
 	}
@@ -42,6 +43,7 @@ func (l *Lexer) readNextChar() {
 	}
 }
 
+// peekNextChar returns the next character from the input string without consuming it.
 func (l *Lexer) peekNextChar() (rune, error) {
 	r, _, err := l.reader.ReadRune()
 	if err != nil {
@@ -51,6 +53,7 @@ func (l *Lexer) peekNextChar() (rune, error) {
 		return 0, err
 	}
 
+	// 'Unread' the rune so that it can be read again.
 	if err := l.reader.UnreadRune(); err != nil {
 		return 0, err
 	}
@@ -58,6 +61,7 @@ func (l *Lexer) peekNextChar() (rune, error) {
 	return r, nil
 }
 
+// Tokenize reads the entire input string and returns a slice of tokens.
 func (l *Lexer) Tokenize() []token.Token {
 	var tokens []token.Token
 	for {
@@ -70,8 +74,13 @@ func (l *Lexer) Tokenize() []token.Token {
 	return tokens
 }
 
+// NextToken returns the next token from the input string.
 func (l *Lexer) NextToken() token.Token {
 	var t token.Token
+
+	if isWhitespace(l.ch) {
+		return l.handleWhitespace()
+	}
 
 	switch l.ch {
 	case '=':
@@ -232,29 +241,55 @@ func (l *Lexer) NextToken() token.Token {
 		}
 		l.readNextChar()
 	case 0:
-		t = token.New(token.Eof, "")
+		t = l.handleEof()
 	default:
-		if isWhitespace(l.ch) {
-			l.readNextChar()
-			return l.NextToken()
-		}
-		if isLetter(l.ch) {
-			t = l.readIdentifier()
-		} else if unicode.IsDigit(l.ch) {
-			num, err := l.readNumber()
-
-			if err == nil {
-				t = token.New(token.Number, num)
-			} else {
-				t = token.New(token.Illegal, num)
-			}
-		} else {
-			t = token.New(token.Illegal, string(l.ch))
-			l.readNextChar()
-		}
+		t = l.handleDefaultCase(t)
 	}
 
 	return t
+}
+
+func (l *Lexer) handleEof() token.Token {
+	return token.New(token.Eof, "")
+}
+
+func (l *Lexer) handleDefaultCase(t token.Token) token.Token {
+	switch {
+	case isLetter(l.ch):
+		t = l.handleIdentifier(t)
+	case unicode.IsDigit(l.ch):
+		t = l.handleNumber(t)
+	default:
+		t = l.handleIllegalRune(t)
+	}
+	return t
+}
+
+func (l *Lexer) handleIllegalRune(t token.Token) token.Token {
+	t = token.New(token.Illegal, string(l.ch))
+	l.readNextChar()
+	return t
+}
+
+func (l *Lexer) handleNumber(t token.Token) token.Token {
+	num, err := l.readNumber()
+
+	if err == nil {
+		t = token.New(token.Number, num)
+	} else {
+		t = token.New(token.Illegal, num)
+	}
+	return t
+}
+
+func (l *Lexer) handleIdentifier(t token.Token) token.Token {
+	t = l.readIdentifier()
+	return t
+}
+
+func (l *Lexer) handleWhitespace() token.Token {
+	l.readNextChar()
+	return l.NextToken()
 }
 
 func (l *Lexer) readIdentifier() token.Token {
