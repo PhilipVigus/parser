@@ -210,6 +210,40 @@ func TestLexer_Tokenize_FromString(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:  "Multiple tokens with whitespace",
+			input: "ident_with_underscores; & / ident.",
+			expected: []token.Token{
+				{
+					Type:  token.Ident,
+					Value: "ident_with_underscores",
+				},
+				{
+					Type:  token.Semicolon,
+					Value: ";",
+				},
+				{
+					Type:  token.Illegal,
+					Value: "&",
+				},
+				{
+					Type:  token.Divide,
+					Value: "/",
+				},
+				{
+					Type:  token.Ident,
+					Value: "ident",
+				},
+				{
+					Type:  token.FullStop,
+					Value: ".",
+				},
+				{
+					Type:  token.Eof,
+					Value: "",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -249,6 +283,36 @@ func TestLexer_Tokenize_FromFile(t *testing.T) {
 				{
 					Type:  token.Semicolon,
 					Value: ";",
+				},
+				{
+					Type:  token.Eof,
+					Value: "",
+				},
+			},
+		},
+		{
+			name:     "Multiple lines",
+			filePath: "testdata/multiple_lines.txt",
+			expected: []token.Token{
+				{
+					Type:  token.Ident,
+					Value: "x",
+				},
+				{
+					Type:  token.Assign,
+					Value: "=",
+				},
+				{
+					Type:  token.Number,
+					Value: "5",
+				},
+				{
+					Type:  token.Semicolon,
+					Value: ";",
+				},
+				{
+					Type:  token.String,
+					Value: "test    test",
 				},
 				{
 					Type:  token.Eof,

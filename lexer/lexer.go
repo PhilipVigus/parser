@@ -234,6 +234,10 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		t = token.New(token.Eof, "")
 	default:
+		if isWhitespace(l.ch) {
+			l.readNextChar()
+			return l.NextToken()
+		}
 		if isLetter(l.ch) {
 			t = l.readIdentifier()
 		} else if unicode.IsDigit(l.ch) {
@@ -341,4 +345,8 @@ func (l *Lexer) readString(ch rune) (string, bool) {
 
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isWhitespace(ch rune) bool {
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
 }
