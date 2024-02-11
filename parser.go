@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	inputString := "'a string'"
+	inputString := "it;"
 	lexerFromString := lexer.New(strings.NewReader(inputString))
 
 	tokens := lexerFromString.Tokenize()

@@ -3,20 +3,25 @@ package token
 import "fmt"
 
 type Type int
+
 type Token struct {
-	Type  Type
-	Value string
+	Type   Type
+	Value  string
+	Line   int
+	Column int
 }
 
-func New(t Type, l string) Token {
+func New(t Type, v string, l int, c int) Token {
 	return Token{
-		Type:  t,
-		Value: l,
+		Type:   t,
+		Value:  v,
+		Line:   l,
+		Column: c,
 	}
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("[ type: %s, value: %v ]", GetStringFromTokenType(t), t.Value)
+	return fmt.Sprintf("[ type: %s, value: %v, position: %d:%d ]", GetStringFromTokenType(t), t.Value, t.Line, t.Column)
 }
 
 const (

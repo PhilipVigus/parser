@@ -8,6 +8,7 @@ import (
 	"parser/lexer/token"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // Lexer is a lexer for the programming language.
@@ -16,12 +17,18 @@ type Lexer struct {
 	reader *bufio.Reader
 	// ch is the current character being read.
 	ch rune
+	// line is the current line number.
+	line int
+	// col is the current column number.
+	col int
 }
 
 // New creates a new lexer from the given reader.
 func New(r io.Reader) *Lexer {
 	l := &Lexer{
 		reader: bufio.NewReader(r),
+		line:   0,
+		col:    0,
 	}
 	// Read the first character to initialize the lexer.
 	l.readNextChar()
@@ -32,6 +39,7 @@ func New(r io.Reader) *Lexer {
 func (l *Lexer) readNextChar() {
 	var err error
 	l.ch, _, err = l.reader.ReadRune()
+	l.col++
 	if err == nil {
 		return
 	}
@@ -87,157 +95,159 @@ func (l *Lexer) NextToken() token.Token {
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '=' {
 			l.readNextChar()
-			t = token.New(token.Equal, "==")
+			t = token.New(token.Equal, "==", l.line, l.col-2)
 		} else {
-			t = token.New(token.Assign, "=")
+			t = token.New(token.Assign, "=", l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '+':
-		t = token.New(token.Plus, "+")
+		t = token.New(token.Plus, "+", l.line, l.col-1)
 		l.readNextChar()
 	case '-':
-		t = token.New(token.Minus, "-")
+		t = token.New(token.Minus, "-", l.line, l.col-1)
 		l.readNextChar()
 	case '*':
-		t = token.New(token.Multiply, "*")
+		t = token.New(token.Multiply, "*", l.line, l.col-1)
 		l.readNextChar()
 	case '/':
-		t = token.New(token.Divide, "/")
+		t = token.New(token.Divide, "/", l.line, l.col-1)
 		l.readNextChar()
 	case ',':
-		t = token.New(token.Comma, ",")
+		t = token.New(token.Comma, ",", l.line, l.col-1)
 		l.readNextChar()
 	case '.':
-		t = token.New(token.FullStop, ".")
+		t = token.New(token.FullStop, ".", l.line, l.col-1)
 		l.readNextChar()
 	case ';':
-		t = token.New(token.Semicolon, ";")
+		t = token.New(token.Semicolon, ";", l.line, l.col-1)
 		l.readNextChar()
 	case ':':
-		t = token.New(token.Colon, ":")
+		t = token.New(token.Colon, ":", l.line, l.col-1)
 		l.readNextChar()
 	case '(':
-		t = token.New(token.LParen, "(")
+		t = token.New(token.LParen, "(", l.line, l.col-1)
 		l.readNextChar()
 	case ')':
-		t = token.New(token.RParen, ")")
+		t = token.New(token.RParen, ")", l.line, l.col-1)
 		l.readNextChar()
 	case '{':
-		t = token.New(token.LBrace, "{")
+		t = token.New(token.LBrace, "{", l.line, l.col-1)
 		l.readNextChar()
 	case '}':
-		t = token.New(token.RBrace, "}")
+		t = token.New(token.RBrace, "}", l.line, l.col-1)
 		l.readNextChar()
 	case '[':
-		t = token.New(token.LBracket, "[")
+		t = token.New(token.LBracket, "[", l.line, l.col-1)
 		l.readNextChar()
 	case ']':
-		t = token.New(token.RBracket, "]")
+		t = token.New(token.RBracket, "]", l.line, l.col-1)
 		l.readNextChar()
 	case '%':
-		t = token.New(token.Percent, "%")
+		t = token.New(token.Percent, "%", l.line, l.col-1)
 		l.readNextChar()
 	case '>':
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '=' {
 			l.readNextChar()
-			t = token.New(token.GreaterThanOrEqual, ">=")
+			t = token.New(token.GreaterThanOrEqual, ">=", l.line, l.col-2)
 		} else {
-			t = token.New(token.GreaterThan, ">")
+			t = token.New(token.GreaterThan, ">", l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '<':
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '=' {
 			l.readNextChar()
-			t = token.New(token.LessThanOrEqual, "<=")
+			t = token.New(token.LessThanOrEqual, "<=", l.line, l.col-2)
 		} else {
-			t = token.New(token.LessThan, "<")
+			t = token.New(token.LessThan, "<", l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '!':
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '=' {
 			l.readNextChar()
-			t = token.New(token.NotEqual, "!=")
+			t = token.New(token.NotEqual, "!=", l.line, l.col-2)
 		} else {
-			t = token.New(token.Not, "!")
+			t = token.New(token.Not, "!", l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '&':
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '&' {
 			l.readNextChar()
-			t = token.New(token.And, "&&")
+			t = token.New(token.And, "&&", l.line, l.col-2)
 		} else {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '|':
 		nextChar, err := l.peekNextChar()
 
 		if err != nil {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 			l.readNextChar()
 			break
 		}
 
 		if nextChar == '|' {
 			l.readNextChar()
-			t = token.New(token.Or, "||")
+			t = token.New(token.Or, "||", l.line, l.col-2)
 		} else {
-			t = token.New(token.Illegal, string(l.ch))
+			t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 		}
 		l.readNextChar()
 	case '"':
 		str, err := l.readString('"')
 		if err {
-			t = token.New(token.Illegal, str)
+			t = token.New(token.Illegal, str, l.line, l.col-utf8.RuneCountInString(str)-1)
+			l.col--
 		} else {
-			t = token.New(token.String, str)
+			t = token.New(token.String, str, l.line, l.col-utf8.RuneCountInString(str)-2)
 		}
 		l.readNextChar()
 	case '\'':
 		str, err := l.readString('\'')
 		if err {
-			t = token.New(token.Illegal, str)
+			t = token.New(token.Illegal, str, l.line, l.col-utf8.RuneCountInString(str)-1)
+			l.col--
 		} else {
-			t = token.New(token.String, str)
+			t = token.New(token.String, str, l.line, l.col-utf8.RuneCountInString(str)-2)
 		}
 		l.readNextChar()
 	case 0:
@@ -250,7 +260,7 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func (l *Lexer) handleEof() token.Token {
-	return token.New(token.Eof, "")
+	return token.New(token.Eof, "", l.line, l.col-1)
 }
 
 func (l *Lexer) handleDefaultCase(t token.Token) token.Token {
@@ -266,7 +276,7 @@ func (l *Lexer) handleDefaultCase(t token.Token) token.Token {
 }
 
 func (l *Lexer) handleIllegalRune(t token.Token) token.Token {
-	t = token.New(token.Illegal, string(l.ch))
+	t = token.New(token.Illegal, string(l.ch), l.line, l.col-1)
 	l.readNextChar()
 	return t
 }
@@ -275,9 +285,9 @@ func (l *Lexer) handleNumber(t token.Token) token.Token {
 	num, err := l.readNumber()
 
 	if err == nil {
-		t = token.New(token.Number, num)
+		t = token.New(token.Number, num, l.line, l.col-utf8.RuneCountInString(num)-1)
 	} else {
-		t = token.New(token.Illegal, num)
+		t = token.New(token.Illegal, num, l.line, l.col-utf8.RuneCountInString(num)-1)
 	}
 	return t
 }
@@ -288,6 +298,10 @@ func (l *Lexer) handleIdentifier(t token.Token) token.Token {
 }
 
 func (l *Lexer) handleWhitespace() token.Token {
+	if l.ch == '\n' {
+		l.line++
+		l.col = 0
+	}
 	l.readNextChar()
 	return l.NextToken()
 }
@@ -300,7 +314,7 @@ func (l *Lexer) readIdentifier() token.Token {
 	}
 	identifier := builder.String()
 
-	return token.New(token.GetKeywordType(identifier), identifier)
+	return token.New(token.GetKeywordType(identifier), identifier, l.line, l.col-utf8.RuneCountInString(identifier)-1)
 }
 
 func (l *Lexer) readNumber() (string, error) {
