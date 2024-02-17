@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
-	"parser/lexer"
-	"strings"
+	"os"
+	"os/user"
+	"parser/repl"
 )
 
 func main() {
-	inputString := "it;"
-	lexerFromString := lexer.New(strings.NewReader(inputString))
-
-	tokens := lexerFromString.Tokenize()
-
-	fmt.Println(tokens)
+	u, err := user.Current()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Hello %s! This is the programming language!\n",
+		u.Username)
+	fmt.Printf("Feel free to type in commands\n")
+	repl.Start(os.Stdin, os.Stdout)
 }
