@@ -613,7 +613,7 @@ func TestToken_String(t *testing.T) {
 			lit:      "Illegal",
 			ln:       1,
 			col:      2,
-			expected: "[ type: Illegal, value: Illegal, position: 1:2]",
+			expected: "[ type: Illegal, value: Illegal, position: 1:2 ]",
 		},
 		{
 			name:     "Eof",
@@ -621,7 +621,7 @@ func TestToken_String(t *testing.T) {
 			lit:      "Eof",
 			ln:       1,
 			col:      2,
-			expected: "[ type: Eof, value: Eof, position: 1:2]",
+			expected: "[ type: Eof, value: Eof, position: 1:2 ]",
 		},
 	}
 
