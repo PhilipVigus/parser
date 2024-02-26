@@ -5,7 +5,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"parser/lexer/token"
+	"lang/lexer/token"
 	"strings"
 	"unicode"
 	"unicode/utf8"

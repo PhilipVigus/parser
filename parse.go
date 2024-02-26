@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"lang/repl"
 	"os"
 	"os/user"
-	"parser/repl"
 )
 
 func main() {

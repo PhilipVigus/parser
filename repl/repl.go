@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"parser/lexer"
-	"parser/lexer/token"
+	"lang/lexer"
+	"lang/lexer/token"
 	"strings"
 )
 

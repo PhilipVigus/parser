@@ -1,8 +1,8 @@
 package lexer
 
 import (
+	"lang/lexer/token"
 	"os"
-	"parser/lexer/token"
 	"reflect"
 	"strings"
 	"testing"
