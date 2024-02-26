@@ -28,7 +28,7 @@ func (p *Parser) nextToken() {
 func (p *Parser) ParseProgram() *statements.Program {
 	program := &statements.Program{}
 	program.Statements = []statements.Statement{}
-	for p.currentToken.Type != token.Eof {
+	for !p.curTokenIs(token.Eof) {
 		stmt := p.parseStatement()
 		if stmt != nil {
 			program.Statements = append(program.Statements, stmt)
