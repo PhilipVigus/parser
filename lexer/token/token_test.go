@@ -826,7 +826,7 @@ func TestGetTokenType(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := GetStringFromTokenType(tt.t)
+			actual := GetStringFromTokenType(tt.t.Type)
 			if !reflect.DeepEqual(actual, tt.expected) {
 				t.Errorf("Expected: %v, Actual: %v", tt.expected, actual)
 			}

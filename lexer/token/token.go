@@ -23,7 +23,7 @@ func New(t Type, v string, l int, c int) Token {
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("[ type: %s, value: %v, position: %d:%d ]", GetStringFromTokenType(t), t.Value, t.Line, t.Column)
+	return fmt.Sprintf("[ type: %s, value: %v, position: %d:%d ]", GetStringFromTokenType(t.Type), t.Value, t.Line, t.Column)
 }
 
 const (
@@ -210,8 +210,8 @@ var tokenTypeToString = map[Type]string{
 	Finally:            "Finally",
 }
 
-func GetStringFromTokenType(t Token) string {
-	name, exists := tokenTypeToString[t.Type]
+func GetStringFromTokenType(t Type) string {
+	name, exists := tokenTypeToString[t]
 
 	if exists {
 		return name
