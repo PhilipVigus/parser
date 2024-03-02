@@ -68,6 +68,7 @@ const (
 	Function
 	Define
 	Const
+	Let
 	Class
 	Include
 	Interface
@@ -103,6 +104,7 @@ var keywordsToTypes = map[string]Type{
 	"function":   Function,
 	"define":     Define,
 	"const":      Const,
+	"let":        Let,
 	"class":      Class,
 	"include":    Include,
 	"interface":  Interface,
@@ -181,6 +183,7 @@ var tokenTypeToString = map[Type]string{
 	Function:           "Function",
 	Define:             "Define",
 	Const:              "Const",
+	Let:                "Let",
 	Class:              "Class",
 	Include:            "Include",
 	Interface:          "Interface",

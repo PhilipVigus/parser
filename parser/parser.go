@@ -41,15 +41,15 @@ func (p *Parser) ParseProgram() *statements.Program {
 
 func (p *Parser) parseStatement() statements.Statement {
 	switch p.currentToken.Type {
-	case token.Define:
-		return p.parseAssignmentStatement()
+	case token.Let:
+		return p.parseAssignStatement()
 	default:
 		return nil
 	}
 }
 
-func (p *Parser) parseAssignmentStatement() *statements.Define {
-	stmt := &statements.Define{Token: p.currentToken}
+func (p *Parser) parseAssignStatement() *statements.Assign {
+	stmt := &statements.Assign{Token: p.currentToken}
 
 	if !p.expectPeek(token.Ident) {
 		return nil

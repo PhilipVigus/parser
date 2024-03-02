@@ -548,6 +548,19 @@ func TestToken_New(t *testing.T) {
 			},
 		},
 		{
+			name: "Let",
+			t:    Let,
+			lit:  "Let",
+			ln:   1,
+			col:  2,
+			expected: Token{
+				Type:   Let,
+				Value:  "Let",
+				Line:   1,
+				Column: 2,
+			},
+		},
+		{
 			name: "Class",
 			t:    Class,
 			lit:  "Class",

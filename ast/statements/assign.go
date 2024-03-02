@@ -5,14 +5,14 @@ import (
 	"lang/lexer/token"
 )
 
-type Define struct {
+type Assign struct {
 	Token token.Token
 	Name  *expressions.Identifier
 	Value expressions.Expression
 }
 
-func (a *Define) TokenValue() string {
+func (a *Assign) TokenValue() string {
 	return a.Token.Value
 }
 
-func (a *Define) statementNode() {}
+func (a *Assign) statementNode() {}

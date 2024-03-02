@@ -9,8 +9,8 @@ import (
 
 func TestAssignmentStatements(t *testing.T) {
 	input := `
-		define x = 5;
-		define foo = 10;`
+		let x = 5;
+		let foo = 10;`
 
 	l := lexer.New(strings.NewReader(input))
 	p := New(l)
@@ -36,12 +36,12 @@ func TestAssignmentStatements(t *testing.T) {
 }
 
 func ProcessAssignmentStatement(t *testing.T, s statements.Statement, name string) bool {
-	if s.TokenValue() != "define" {
-		t.Errorf("s.TokenValue not 'define'. got=%q", s.TokenValue())
+	if s.TokenValue() != "let" {
+		t.Errorf("s.TokenValue not 'let'. got=%q", s.TokenValue())
 		return false
 	}
 
-	assignmentStatement, ok := s.(*statements.Define)
+	assignmentStatement, ok := s.(*statements.Assign)
 	if !ok {
 		t.Errorf("s not *ast.AssignmentStatement. got=%T", s)
 		return false
