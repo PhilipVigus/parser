@@ -36,6 +36,35 @@ func TestAssignmentStatements(t *testing.T) {
 	}
 }
 
+func TestReturnStatements(t *testing.T) {
+	input := `
+		return 5;
+		return 10;`
+
+	l := lexer.New(strings.NewReader(input))
+	p := New(l)
+	program := p.ParseProgram()
+	checkParseErrors(t, p)
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+	if len(program.Statements) != 2 {
+		t.Fatalf("program.Statements does not contain 2 statements. got=%d", len(program.Statements))
+	}
+	tests := []struct {
+		expectedIdentifier string
+	}{
+		{"5"},
+		{"10"},
+	}
+	for i, tt := range tests {
+		stmt := program.Statements[i]
+		if !ProcessReturnStatement(t, stmt, tt.expectedIdentifier) {
+			return
+		}
+	}
+}
+
 func checkParseErrors(t *testing.T, p *Parser) {
 	errors := p.Errors()
 	if len(errors) == 0 {
@@ -67,6 +96,21 @@ func ProcessAssignmentStatement(t *testing.T, s statements.Statement, name strin
 
 	if assignmentStatement.Name.TokenValue() != name {
 		t.Errorf("s.Name not '%s'. got=%s", name, assignmentStatement.Name)
+		return false
+	}
+
+	return true
+}
+
+func ProcessReturnStatement(t *testing.T, s statements.Statement, value string) bool {
+	if s.TokenValue() != "return" {
+		t.Errorf("s.TokenValue not 'return'. got=%q", s.TokenValue())
+		return false
+	}
+
+	_, ok := s.(*statements.Return)
+	if !ok {
+		t.Errorf("s not *ast.ReturnStatement. got=%T", s)
 		return false
 	}
 
