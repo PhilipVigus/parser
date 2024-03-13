@@ -1,6 +1,7 @@
 package statements
 
 import (
+	"bytes"
 	"lang/ast/expressions"
 	"lang/lexer/token"
 )
@@ -15,3 +16,17 @@ func (r *Return) TokenValue() string {
 }
 
 func (r *Return) statementNode() {}
+
+func (r *Return) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(r.TokenValue() + " ")
+
+	if r.ReturnValue != nil {
+		out.WriteString(r.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
+}
