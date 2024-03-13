@@ -8,6 +8,17 @@ import (
 	"lang/lexer/token"
 )
 
+const (
+	_ int = iota
+	LOWEST
+	EQUALS       // ==
+	LESS_GREATER // > or <
+	SUM          // +
+	PRODUCT      // *
+	PREFIX       // -X or !X
+	CALL         // myFunction(X)
+)
+
 type (
 	prefixParseFn func() expressions.Expression
 	infixParseFn  func(expressions.Expression) expressions.Expression
@@ -24,9 +35,15 @@ type Parser struct {
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l}
+
 	p.nextToken()
 	p.nextToken()
+
 	p.errors = []string{}
+
+	p.prefixParseFns = make(map[token.Type]prefixParseFn)
+	p.registerPrefix(token.Ident, p.parseIdentifier)
+
 	return p
 }
 
@@ -74,7 +91,7 @@ func (p *Parser) parseStatement() statements.Statement {
 	case token.Return:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
@@ -108,6 +125,31 @@ func (p *Parser) parseReturnStatement() *statements.Return {
 	}
 
 	return stmt
+}
+
+func (p *Parser) parseExpressionStatement() *statements.ExpressionStatement {
+	stmt := &statements.ExpressionStatement{Token: p.currentToken}
+
+	stmt.Expression = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.Semicolon) {
+		p.nextToken()
+	}
+
+	return stmt
+}
+
+func (p *Parser) parseExpression(precedence int) expressions.Expression {
+	prefix := p.prefixParseFns[p.currentToken.Type]
+	if prefix == nil {
+		return nil
+	}
+	leftExp := prefix()
+	return leftExp
+}
+
+func (p *Parser) parseIdentifier() expressions.Expression {
+	return &expressions.Identifier{Token: p.currentToken, Value: p.currentToken.Value}
 }
 
 func (p *Parser) curTokenIs(t token.Type) bool {
