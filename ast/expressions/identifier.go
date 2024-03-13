@@ -14,5 +14,5 @@ func (i *Identifier) TokenValue() string {
 func (i *Identifier) expressionNode() {}
 
 func (i *Identifier) String() string {
-	return ""
+	return i.Value
 }
