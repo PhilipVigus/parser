@@ -6,6 +6,7 @@ import (
 	"lang/ast/statements"
 	"lang/lexer"
 	"lang/lexer/token"
+	"strconv"
 )
 
 const (
@@ -43,6 +44,7 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.Type]prefixParseFn)
 	p.registerPrefix(token.Ident, p.parseIdentifier)
+	p.registerPrefix(token.Number, p.ParseNumberLiteral)
 
 	return p
 }
@@ -150,6 +152,27 @@ func (p *Parser) parseExpression(precedence int) expressions.Expression {
 
 func (p *Parser) parseIdentifier() expressions.Expression {
 	return &expressions.Identifier{Token: p.currentToken, Value: p.currentToken.Value}
+}
+
+func (p *Parser) ParseNumberLiteral() expressions.Expression {
+	tokenValue := p.currentToken.Value
+
+	if i, err := strconv.ParseInt(tokenValue, 10, 64); err == nil {
+		return &expressions.NumberLiteral[int64]{
+			Token: p.currentToken,
+			Value: i,
+		}
+	}
+
+	if f, err := strconv.ParseFloat(tokenValue, 64); err == nil {
+		return &expressions.NumberLiteral[float64]{
+			Token: p.currentToken,
+			Value: f,
+		}
+	}
+
+	p.errors = append(p.errors, fmt.Sprintf("could not parse %q as number", tokenValue))
+	return nil
 }
 
 func (p *Parser) curTokenIs(t token.Type) bool {

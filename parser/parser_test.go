@@ -103,7 +103,7 @@ func ProcessAssignmentStatement(t *testing.T, s statements.Statement, name strin
 	return true
 }
 
-func ProcessReturnStatement(t *testing.T, s statements.Statement, value string) bool {
+func ProcessReturnStatement(t *testing.T, s statements.Statement, _ string) bool {
 	if s.TokenValue() != "return" {
 		t.Errorf("s.TokenValue not 'return'. got=%q", s.TokenValue())
 		return false
@@ -147,5 +147,57 @@ func TestIdentifierExpression(t *testing.T) {
 
 	if ident.TokenValue() != "foobar" {
 		t.Errorf("ident.TokenValue not %s. got=%s", "foobar", ident.TokenValue())
+	}
+}
+
+func TestNumberLiteralExpression(t *testing.T) {
+	tests := []struct {
+		input         string
+		expectedValue interface{}
+		expectedType  interface{}
+	}{
+		{"5;", 5, int64(0)},       // Example integer test case
+		{"5.5;", 5.5, float64(0)}, // Example float test case
+		// Add more test cases as needed
+	}
+
+	for _, tt := range tests {
+		l := lexer.New(strings.NewReader(tt.input))
+		p := New(l)
+		program := p.ParseProgram()
+
+		checkParseErrors(t, p) // Ensure your test setup includes this function to check parser errors
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program has not enough statements. got=%d", len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*statements.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not *statements.ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		switch expected := tt.expectedValue.(type) {
+		case int:
+			literal, ok := stmt.Expression.(*expressions.NumberLiteral[int64])
+			if !ok {
+				t.Errorf("for input '%s', expected *expressions.NumberLiteral[int64], got=%T", tt.input, stmt.Expression)
+			} else if int64(expected) != literal.Value {
+				t.Errorf("for input '%s', expected value %d, got=%d", tt.input, expected, literal.Value)
+			}
+		case float64:
+			literal, ok := stmt.Expression.(*expressions.NumberLiteral[float64])
+			if !ok {
+				t.Errorf("for input '%s', expected *expressions.NumberLiteral[float64], got=%T", tt.input, stmt.Expression)
+			} else if expected != literal.Value {
+				t.Errorf("for input '%s', expected value %f, got=%f", tt.input, expected, literal.Value)
+			}
+		default:
+			t.Fatalf("unsupported type in test case")
+		}
+
+		if tt.expectedType != nil && stmt.Expression.String() != tt.input[:len(tt.input)-1] {
+			t.Errorf("literal.TokenValue not %s. got=%s", tt.input[:len(tt.input)-1], stmt.Expression.String())
+		}
 	}
 }
