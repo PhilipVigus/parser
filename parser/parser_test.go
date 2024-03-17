@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"lang/ast/expressions"
 	"lang/ast/statements"
 	"lang/lexer"
@@ -200,4 +201,107 @@ func TestNumberLiteralExpression(t *testing.T) {
 			t.Errorf("literal.TokenValue not %s. got=%s", tt.input[:len(tt.input)-1], stmt.Expression.String())
 		}
 	}
+}
+
+func TestParsingPrefixExpressions(t *testing.T) {
+	prefixTests := []struct {
+		input    string
+		operator string
+		value    interface{}
+	}{
+		{"!5;", "!", 5},
+		{"-15.5;", "-", 15.5},
+		// Add more test cases as needed
+	}
+
+	for _, tt := range prefixTests {
+		l := lexer.New(strings.NewReader(tt.input))
+		p := New(l)
+		program := p.ParseProgram()
+		checkParseErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d\n", 1, len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*statements.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
+		}
+
+		exp, ok := stmt.Expression.(*expressions.PrefixExpression)
+		if !ok {
+			t.Fatalf("stmt is not ast.PrefixExpression. got=%T", stmt.Expression)
+		}
+
+		if exp.Operator != tt.operator {
+			t.Fatalf("exp.Operator is not '%s'. got=%s", tt.operator, exp.Operator)
+		}
+
+		switch expected := tt.value.(type) {
+		case int:
+			if !IntegerLiteralExpressionTester(t, exp.Right, int64(expected)) {
+				return
+			}
+		case float64:
+			if !FloatLiteralExpressionTester(t, exp.Right, expected) {
+				return
+			}
+		default:
+			t.Fatalf("unsupported type in test case")
+		}
+	}
+}
+
+func IntegerLiteralExpressionTester(t *testing.T, il expressions.Expression, value int64) bool {
+	i, ok := il.(*expressions.NumberLiteral[int64])
+	if !ok {
+		t.Errorf("il not IntegerLiteral. got=%T", il)
+		return false
+	}
+
+	if i.Value != value {
+		t.Errorf("i.Value not %d. got=%d", value, i.Value)
+		return false
+	}
+
+	if i.TokenValue() != fmt.Sprintf("%d", value) {
+		t.Errorf("i.TokenLiteral not %d. got=%s", value,
+			i.TokenValue())
+		return false
+	}
+
+	return true
+}
+
+func FloatLiteralExpressionTester(t *testing.T, il expressions.Expression, value float64) bool {
+	f, ok := il.(*expressions.NumberLiteral[float64])
+	if !ok {
+		t.Errorf("f not IntegerLiteral. got=%T", il)
+		return false
+	}
+
+	f.TokenValue()
+
+	if f.Value != value {
+		t.Errorf("f.Value not %f. got=%f", value, f.Value)
+		return false
+	}
+
+	if !CompareFloatingPointStrings(f.TokenValue(), fmt.Sprintf("%f", value)) {
+		t.Errorf("f.TokenLiteral not %f. got=%s", value, f.TokenValue())
+		return false
+	}
+
+	return true
+}
+
+// CompareFloatingPointStrings compares two strings representing floating point numbers.
+// It trims trailing zeros and decimal points if they result in an integer value.
+func CompareFloatingPointStrings(a, b string) bool {
+	// Trim trailing zeros and decimal points if they result in an integer value.
+	trimmedA := strings.TrimRight(strings.TrimRight(a, "0"), ".")
+	trimmedB := strings.TrimRight(strings.TrimRight(b, "0"), ".")
+
+	return trimmedA == trimmedB
 }
