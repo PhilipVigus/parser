@@ -93,6 +93,8 @@ const (
 	Abstract
 	Return
 	Finally
+	True
+	False
 )
 
 var keywordsToTypes = map[string]Type{
@@ -129,6 +131,8 @@ var keywordsToTypes = map[string]Type{
 	"abstract":   Abstract,
 	"return":     Return,
 	"finally":    Finally,
+	"true":       True,
+	"false":      False,
 }
 
 func GetKeywordType(kw string) Type {
@@ -208,6 +212,8 @@ var tokenTypeToString = map[Type]string{
 	Abstract:           "Abstract",
 	Return:             "Return",
 	Finally:            "Finally",
+	True:               "True",
+	False:              "False",
 }
 
 func GetStringFromTokenType(t Type) string {

@@ -599,6 +599,32 @@ func TestToken_New(t *testing.T) {
 				Column: 2,
 			},
 		},
+		{
+			name: "True",
+			t:    True,
+			lit:  "True",
+			ln:   1,
+			col:  2,
+			expected: Token{
+				Type:   True,
+				Value:  "True",
+				Line:   1,
+				Column: 2,
+			},
+		},
+		{
+			name: "False",
+			t:    False,
+			lit:  "False",
+			ln:   1,
+			col:  2,
+			expected: Token{
+				Type:   False,
+				Value:  "False",
+				Line:   1,
+				Column: 2,
+			},
+		},
 	}
 
 	for _, tt := range tests {
