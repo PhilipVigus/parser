@@ -43,10 +43,22 @@ func New(l *lexer.Lexer) *Parser {
 	p.errors = []string{}
 
 	p.prefixParseFns = make(map[token.Type]prefixParseFn)
+	p.infixParseFns = make(map[token.Type]infixParseFn)
+
 	p.registerPrefix(token.Ident, p.parseIdentifier)
 	p.registerPrefix(token.Number, p.ParseNumberLiteral)
 	p.registerPrefix(token.Minus, p.parsePrefixExpression)
 	p.registerPrefix(token.Not, p.parsePrefixExpression)
+	p.registerInfix(token.Plus, p.parseInfixExpression)
+	p.registerInfix(token.Minus, p.parseInfixExpression)
+	p.registerInfix(token.Multiply, p.parseInfixExpression)
+	p.registerInfix(token.Divide, p.parseInfixExpression)
+	p.registerInfix(token.Equal, p.parseInfixExpression)
+	p.registerInfix(token.NotEqual, p.parseInfixExpression)
+	p.registerInfix(token.LessThan, p.parseInfixExpression)
+	p.registerInfix(token.GreaterThan, p.parseInfixExpression)
+	p.registerInfix(token.LessThanOrEqual, p.parseInfixExpression)
+	p.registerInfix(token.GreaterThanOrEqual, p.parseInfixExpression)
 
 	return p
 }
@@ -150,6 +162,14 @@ func (p *Parser) parseExpression(precedence int) expressions.Expression {
 		return nil
 	}
 	leftExp := prefix()
+	for !p.peekTokenIs(token.Semicolon) && precedence < p.peekPrecedence() {
+		infix := p.infixParseFns[p.peekToken.Type]
+		if infix == nil {
+			return leftExp
+		}
+		p.nextToken()
+		leftExp = infix(leftExp)
+	}
 	return leftExp
 }
 
@@ -209,4 +229,43 @@ func (p *Parser) parsePrefixExpression() expressions.Expression {
 	p.nextToken()
 	expression.Right = p.parseExpression(PREFIX)
 	return expression
+}
+
+func (p *Parser) parseInfixExpression(left expressions.Expression) expressions.Expression {
+	expression := &expressions.InfixExpression{
+		Token:    p.currentToken,
+		Left:     left,
+		Operator: p.currentToken.Value,
+	}
+	precedence := p.curPrecedence()
+	p.nextToken()
+	expression.Right = p.parseExpression(precedence)
+	return expression
+}
+
+var precedences = map[token.Type]int{
+	token.Equal:              EQUALS,
+	token.NotEqual:           EQUALS,
+	token.LessThan:           LESS_GREATER,
+	token.GreaterThan:        LESS_GREATER,
+	token.LessThanOrEqual:    LESS_GREATER,
+	token.GreaterThanOrEqual: LESS_GREATER,
+	token.Plus:               SUM,
+	token.Minus:              SUM,
+	token.Multiply:           PRODUCT,
+	token.Divide:             PRODUCT,
+}
+
+func (p *Parser) curPrecedence() int {
+	if p, ok := precedences[p.currentToken.Type]; ok {
+		return p
+	}
+	return LOWEST
+}
+
+func (p *Parser) peekPrecedence() int {
+	if p, ok := precedences[p.peekToken.Type]; ok {
+		return p
+	}
+	return LOWEST
 }
